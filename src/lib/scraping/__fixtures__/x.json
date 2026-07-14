@@ -1,0 +1,23 @@
+[
+  {
+    "tweetId": "1880000000000000001",
+    "fullText": "Claude Code work orders make repo changes auditable: one task, one diff, one acceptance test.",
+    "author": {
+      "screenName": "anthropicai",
+      "name": "Anthropic",
+      "verified": true
+    },
+    "createdAt": "2026-06-03T12:00:00.000Z",
+    "media": [
+      {
+        "type": "image",
+        "url": "https://example.com/x-image.jpg"
+      }
+    ],
+    "viewCount": 12000,
+    "likeCount": 720,
+    "replyCount": 42,
+    "bookmarkCount": 80,
+    "retweetCount": 31
+  }
+]

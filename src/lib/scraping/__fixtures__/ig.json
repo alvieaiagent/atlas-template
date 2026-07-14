@@ -1,0 +1,19 @@
+[
+  {
+    "shortCode": "IG_ATLAS_001",
+    "caption": "AI coding reels land better when the hook shows the before/after workflow, not just the tool name.",
+    "owner": {
+      "username": "buildwithai",
+      "fullName": "Build With AI",
+      "isVerified": false
+    },
+    "takenAt": "2026-06-03T14:30:00.000Z",
+    "displayUrl": "https://example.com/ig-image.jpg",
+    "videoUrl": "https://example.com/ig-video.mp4",
+    "videoViewCount": 55000,
+    "likes": 2400,
+    "comments": 133,
+    "saveCount": 400,
+    "shareCount": 120
+  }
+]

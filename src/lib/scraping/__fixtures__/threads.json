@@ -1,0 +1,23 @@
+[
+  {
+    "postId": "threads_001",
+    "text": "Claude Code is easier to manage when prompts become small work orders with clear ownership.",
+    "author": {
+      "username": "cursor_ai",
+      "name": "Cursor",
+      "isVerified": true
+    },
+    "timestamp": "2026-06-03T13:15:00.000Z",
+    "media": [
+      {
+        "type": "image",
+        "imageUrl": "https://example.com/threads-image.jpg"
+      }
+    ],
+    "views": "8,420",
+    "likeCount": 501,
+    "directReplyCount": 18,
+    "saveCount": 91,
+    "reshareCount": 22
+  }
+]
