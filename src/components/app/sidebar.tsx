@@ -12,19 +12,32 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LanguageToggle } from "@/components/app/language-toggle";
+import type { Language } from "@/lib/language";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { href: "/", label: "Dashboard", icon: Gauge },
-  { href: "/inspiration", label: "Inspiration", icon: Lightbulb },
-  { href: "/radar", label: "AI Radar", icon: Radar },
-  { href: "/marked", label: "Marked", icon: Bookmark },
-  { href: "/library", label: "Library", icon: Library },
-  { href: "/competitors", label: "競爭對手", icon: Users },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+const navItems: Record<Language, { href: string; label: string; icon: typeof Gauge }[]> = {
+  en: [
+    { href: "/", label: "Dashboard", icon: Gauge },
+    { href: "/inspiration", label: "Inspiration", icon: Lightbulb },
+    { href: "/radar", label: "AI Radar", icon: Radar },
+    { href: "/marked", label: "Marked", icon: Bookmark },
+    { href: "/library", label: "Library", icon: Library },
+    { href: "/competitors", label: "Competitors", icon: Users },
+    { href: "/settings", label: "Settings", icon: Settings },
+  ],
+  yue: [
+    { href: "/", label: "總覽", icon: Gauge },
+    { href: "/inspiration", label: "靈感 Feed", icon: Lightbulb },
+    { href: "/radar", label: "AI 雷達", icon: Radar },
+    { href: "/marked", label: "已 Mark", icon: Bookmark },
+    { href: "/library", label: "素材庫", icon: Library },
+    { href: "/competitors", label: "競爭對手", icon: Users },
+    { href: "/settings", label: "設定", icon: Settings },
+  ],
+};
 
-export function Sidebar() {
+export function Sidebar({ language }: { language: Language }) {
   const pathname = usePathname();
 
   return (
@@ -39,7 +52,7 @@ export function Sidebar() {
         </div>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
-        {navItems.map((item) => {
+        {navItems[language].map((item) => {
           const active =
             item.href === "/"
               ? pathname === "/"
@@ -61,8 +74,9 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="border-t border-zinc-850 p-3 text-xs text-zinc-600">
-        Atlas
+      <div className="border-t border-zinc-850 p-3">
+        <LanguageToggle language={language} />
+        <p className="mt-3 text-xs text-zinc-600">Atlas</p>
       </div>
     </aside>
   );

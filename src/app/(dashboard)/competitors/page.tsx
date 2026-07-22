@@ -3,6 +3,7 @@ import { UsageGuide } from "@/components/app/usage-guide";
 import { SourceIcon } from "@/components/posts/source-icon";
 import { removeCompetitorAction } from "@/lib/actions";
 import { getCompetitors } from "@/lib/data";
+import { getLanguage, pick } from "@/lib/language";
 import type { Source } from "@/lib/types";
 
 function profileUrl(source: Source, handle: string): string {
@@ -35,42 +36,80 @@ function initialOf(value: string): string {
 }
 
 export default async function CompetitorsPage() {
+  const language = await getLanguage();
+  const copy = pick(language, {
+    en: {
+      eyebrow: "Accounts to watch",
+      title: "Competitors",
+      intro: "Press + beside the source on any card to track that account. This page shows every account you watch and how many saved posts you have from them.",
+      guideTitle: "Competitors = accounts you want to learn from or beat.",
+      guideDescription: "This tab is not for stalking random creators. It is a watchlist for accounts whose hooks, offers, formats, or audience reactions can improve your own content strategy.",
+      addTitle: "Track from any post card",
+      addBody: "Press the + beside a card's source badge when the creator repeatedly makes content worth studying.",
+      auditTitle: "Compare patterns, not ego",
+      auditBody: "Look for their recurring hooks, topic pillars, formats, CTAs, and what their audience rewards.",
+      removeTitle: "Keep the list sharp",
+      removeBody: "Remove accounts that no longer teach you anything. A tight watchlist beats a noisy competitor folder.",
+      tip: "Best use: pick 5–10 accounts max per niche, then review what they do repeatedly that you can ethically adapt.",
+      openTitle: "Open profile",
+      saved: "saved posts",
+      remove: "Remove",
+      empty: "No competitors tracked yet. Press + on a card to add one.",
+    },
+    yue: {
+      eyebrow: "要觀察嘅 accounts",
+      title: "競爭對手",
+      intro: "喺任何卡右上角 source 旁邊撳 + 就追蹤嗰個帳號；呢度睇晒你 watch 緊嘅對手，同已存咗幾多條佢哋嘅 post。",
+      guideTitle: "競爭對手 = 你想學習或者打贏嘅 accounts。",
+      guideDescription: "呢個 tab 唔係用嚟 stalk random creators，而係 watchlist：佢哋嘅 hooks、offers、formats、audience reactions 可以改善你自己嘅 content strategy。",
+      addTitle: "由任何 post card 加入追蹤",
+      addBody: "當一個 creator 重複出到值得研究嘅內容，就喺 card source badge 旁邊撳 +。",
+      auditTitle: "比 patterns，唔係比 ego",
+      auditBody: "睇佢哋重複用咩 hooks、topic pillars、formats、CTAs，同 audience reward 咩。",
+      removeTitle: "保持 list 夠 sharp",
+      removeBody: "唔再教到你嘢嘅 account 就移除。細而準嘅 watchlist，好過嘈雜 competitor folder。",
+      tip: "最佳用法：每個 niche 最多揀 5–10 個 accounts，定期睇佢哋重複做啱咩，再 ethical adapt。",
+      openTitle: "打開 profile",
+      saved: "條已存",
+      remove: "移除",
+      empty: "仲未追蹤任何競爭對手。喺卡右上角撳 + 加入。",
+    },
+  });
   const competitors = await getCompetitors();
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header>
-        <p className="text-sm text-zinc-500">Accounts to watch</p>
+        <p className="text-sm text-zinc-500">{copy.eyebrow}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-normal text-zinc-50">
-          競爭對手
+          {copy.title}
         </h1>
         <p className="mt-1 text-sm text-zinc-500">
-          喺任何卡右上角 source 旁邊撳 <span className="text-zinc-300">+</span>{" "}
-          就追蹤嗰個帳號;呢度睇晒你 watch 緊嘅對手 + 已存咗幾多條佢哋嘅 post。
+          {copy.intro}
         </p>
       </header>
 
       <UsageGuide
-        title="競爭對手 = accounts you want to learn from or beat."
-        description="This tab is not for stalking random creators. It is a watchlist for accounts whose hooks, offers, formats, or audience reactions can improve your own content strategy."
+        title={copy.guideTitle}
+        description={copy.guideDescription}
         steps={[
           {
             label: "Add",
-            title: "Track from any post card",
-            body: "Press the + beside a card's source badge when the creator repeatedly makes content worth studying.",
+            title: copy.addTitle,
+            body: copy.addBody,
           },
           {
             label: "Audit",
-            title: "Compare patterns, not ego",
-            body: "Look for their recurring hooks, topic pillars, formats, CTAs, and what their audience rewards.",
+            title: copy.auditTitle,
+            body: copy.auditBody,
           },
           {
             label: "Remove",
-            title: "Keep the list sharp",
-            body: "Remove accounts that no longer teach you anything. A tight watchlist beats a noisy competitor folder.",
+            title: copy.removeTitle,
+            body: copy.removeBody,
           },
         ]}
-        tip="Best use: pick 5–10 accounts max per niche, then review what they do repeatedly that you can ethically adapt."
+        tip={copy.tip}
       />
 
       {competitors.length ? (
@@ -85,7 +124,7 @@ export default async function CompetitorsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex min-w-0 flex-1 items-center gap-3"
-                title="撳一下開佢 IG"
+                title={copy.openTitle}
               >
                 <span
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full p-[2px] ${ringClass(competitor.source)}`}
@@ -104,7 +143,7 @@ export default async function CompetitorsPage() {
                   <span className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-500">
                     <SourceIcon source={competitor.source} className="h-3 w-3 shrink-0" />
                     <span className="truncate">
-                      @{competitor.handle} · {competitor.postCount} 條已存
+                      @{competitor.handle} · {competitor.postCount} {copy.saved}
                     </span>
                   </span>
                 </span>
@@ -115,9 +154,9 @@ export default async function CompetitorsPage() {
                 <button
                   type="submit"
                   className="text-xs text-zinc-500 transition hover:text-red-300"
-                  title="移除"
+                  title={copy.remove}
                 >
-                  移除
+                  {copy.remove}
                 </button>
               </form>
             </article>
@@ -125,7 +164,7 @@ export default async function CompetitorsPage() {
         </section>
       ) : (
         <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-8 text-center text-sm text-zinc-500">
-          仲未追蹤任何競爭對手。喺卡右上角撳 + 加入。
+          {copy.empty}
         </section>
       )}
     </main>

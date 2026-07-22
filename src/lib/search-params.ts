@@ -12,6 +12,8 @@ export type InspirationSearchParams = {
   source?: string;
   view?: string;
   tab?: string;
+  refresh?: string;
+  errors?: string;
 };
 
 export function parseSources(value: string | undefined): Source[] {
