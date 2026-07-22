@@ -175,7 +175,7 @@ export function buildActorInput(source: Source, query: string, cursor: string | 
   const maxItems = 10;
   switch (source) {
     case "x":
-      return {
+      return stripNullish({
         query,
         searchQuery: query,
         queries: [query],
@@ -185,15 +185,15 @@ export function buildActorInput(source: Source, query: string, cursor: string | 
         sort: "Latest",
         searchMode: "Latest",
         cursor,
-      };
+      });
     case "threads":
-      return {
+      return stripNullish({
         searchQuery: query.replaceAll("\"", ""),
         sort: "recent",
         maxPages: 1,
         maxItems,
         cursor,
-      };
+      });
     case "ig":
       return {
         hashtags: hashtagsFromQuery(query),
@@ -213,6 +213,12 @@ export function buildActorInput(source: Source, query: string, cursor: string | 
       // Library-only manual captures; never part of the scraped feed.
       return {};
   }
+}
+
+function stripNullish(record: UnknownRecord): UnknownRecord {
+  return Object.fromEntries(
+    Object.entries(record).filter(([, value]) => value !== null && value !== undefined),
+  );
 }
 
 function hashtagsFromQuery(query: string): string[] {

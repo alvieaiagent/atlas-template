@@ -39,6 +39,7 @@ describe("Apify normalizer", () => {
       sort: "recent",
       maxPages: 1,
     });
+    expect(buildActorInput("threads", '"prompt engineering"', null)).not.toHaveProperty("cursor");
     expect(buildActorInput("ig", '"prompt engineering" OR "ai tool"', null)).toMatchObject({
       hashtags: ["promptengineering", "aitool"],
       resultsType: "posts",
