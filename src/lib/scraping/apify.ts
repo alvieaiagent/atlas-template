@@ -538,7 +538,18 @@ export function normalizeApifyItems(
     const normalized = normalizeApifyItem(source, categoryId, item);
 
     if (!normalized) {
-      console.warn(`Skipped malformed ${source} item during Apify normalization.`);
+      const keys = isRecord(item) ? Object.keys(item).slice(0, 12).join(",") : typeof item;
+      const nestedKeys =
+        isRecord(item) && isRecord(item.data)
+          ? Object.keys(item.data).slice(0, 12).join(",")
+          : isRecord(item) && isRecord(item.post)
+            ? Object.keys(item.post).slice(0, 12).join(",")
+            : isRecord(item) && isRecord(item.thread)
+              ? Object.keys(item.thread).slice(0, 12).join(",")
+              : "";
+      console.warn(
+        `Skipped malformed ${source} item during Apify normalization. keys=${keys} nested=${nestedKeys}`,
+      );
       return [];
     }
 
