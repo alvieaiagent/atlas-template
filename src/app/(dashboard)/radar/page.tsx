@@ -1,5 +1,6 @@
 import { RefreshCw } from "lucide-react";
 import { FilterLink } from "@/components/app/filter-link";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { PostCard } from "@/components/posts/post-card";
 import { RadarSaveButton } from "@/components/posts/radar-save-button";
 import { ThreadButton } from "@/components/posts/thread-button";
@@ -61,6 +62,29 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
           </Button>
         </form>
       </header>
+
+      <UsageGuide
+        title="AI Radar = timely raw material for fast Threads / X posts."
+        description="This tab is for news and tool signals that expire quickly. Treat it as a radar, not a permanent library: scan fresh updates, save only the ones with a clear opinion angle, then generate a draft while the topic is still warm."
+        steps={[
+          {
+            label: "🔥 最新",
+            title: "Scan the freshest signals",
+            body: "Use 48h by default. Shorten to 4h / 24h when you want breaking updates; extend to 7d when the feed is too empty.",
+          },
+          {
+            label: "⭐ 收藏",
+            title: "Keep only post-worthy items",
+            body: "Save an item only if you can add a POV, explain why it matters, or turn it into a useful mini-thread.",
+          },
+          {
+            label: "Thread",
+            title: "Convert before it goes stale",
+            body: "Use the Thread button after saving to turn the update into a clear hook, short explanation, and practical takeaway.",
+          },
+        ]}
+        tip="Good Radar test: would your audience care today? If it is merely interesting but has no take, leave it unsaved."
+      />
 
       {/* 最新（即棄）/ 收藏（留底）*/}
       <div className="flex gap-2">

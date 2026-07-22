@@ -1,4 +1,5 @@
 import { FilterLink } from "@/components/app/filter-link";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { LinkPasteBox } from "@/components/posts/link-paste-box";
 import { PostCard } from "@/components/posts/post-card";
 import { competitorKey, getCompetitorKeySet, getLibraryPosts } from "@/lib/data";
@@ -95,6 +96,29 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
       ) : null}
 
       <LinkPasteBox initialUrl={sharedUrl} />
+
+      <UsageGuide
+        title="Library = permanent vault for links, notes, and reusable assets."
+        description="Use Library when you already know something is worth keeping. It accepts IG / Threads / X / Facebook / YouTube / website links or raw notes, then classifies them by what you want to make from them."
+        steps={[
+          {
+            label: "Paste",
+            title: "Add anything worth keeping",
+            body: "Paste a public post, article, YouTube link, 小紅書 link, or your own note. Atlas will capture the content into the vault.",
+          },
+          {
+            label: "Purpose",
+            title: "Filter by intended output",
+            body: "Use Reel 腳本, Carousel, 一頁攻略圖, Swipe 拆解, Research, Business/Offer, or 待發掘 to find the right material fast.",
+          },
+          {
+            label: "Reuse",
+            title: "Turn assets into drafts",
+            body: "Open a saved card when you need a script skeleton, swipe pattern, research reference, or business/career talking point.",
+          },
+        ]}
+        tip="Rule: Inspiration is for scanning. Library is for assets you are willing to reuse later. Do not dump every random link here."
+      />
 
       <div className="flex flex-wrap gap-2">
         <FilterLink active={!activePurpose} href="/library">

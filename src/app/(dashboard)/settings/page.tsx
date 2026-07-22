@@ -1,5 +1,6 @@
 import { Plus, Save, Trash2 } from "lucide-react";
 import { SourceToggles } from "@/components/app/source-toggles";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +21,29 @@ export default async function SettingsPage() {
           Settings
         </h1>
       </header>
+
+      <UsageGuide
+        title="Settings = control what Atlas watches."
+        description="Use Settings when the feed feels noisy, empty, or off-strategy. Sources decide where Atlas collects from; categories decide what topics and accounts it should care about."
+        steps={[
+          {
+            label: "Sources",
+            title: "Turn platforms on/off",
+            body: "Enable X / Threads / IG depending on the content format you want to study this week.",
+          },
+          {
+            label: "Categories",
+            title: "Define your topic lanes",
+            body: "Each category should represent a content lane such as Prompt Engineering, AI Video, Carousel Inspiration, or IG Story 漏斗.",
+          },
+          {
+            label: "Keywords",
+            title: "Write search terms like briefs",
+            body: "Use specific keywords and accounts. Broad keywords create noise; precise keywords make the feed useful.",
+          },
+        ]}
+        tip="When the feed is bad, fix Settings first. More scraping will not help if the keywords and accounts are weak."
+      />
 
       <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-4">
         <div className="mb-4">

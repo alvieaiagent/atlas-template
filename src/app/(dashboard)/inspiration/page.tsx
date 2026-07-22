@@ -1,5 +1,6 @@
 import { Grid2X2, List, RefreshCw } from "lucide-react";
 import { FilterLink } from "@/components/app/filter-link";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { PostCard } from "@/components/posts/post-card";
 import { SourceIcon } from "@/components/posts/source-icon";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,34 @@ export default async function InspirationPage({
           </Button>
         </form>
       </header>
+
+      <UsageGuide
+        title="Inspiration = live feed for patterns you can reuse."
+        description="This tab is for scanning fresh X, Threads, and IG Reels references. The job is not to collect links; the job is to spot a hook, angle, format, CTA, or visual rhythm you can remix into your own content."
+        steps={[
+          {
+            label: "X",
+            title: "Sharp takes & thread logic",
+            body: "Use X to study first-line hooks, contrarian angles, argument flow, and thread structures for thought leadership posts.",
+          },
+          {
+            label: "Threads",
+            title: "Human voice & relatability",
+            body: "Use Threads to study casual phrasing, confession-style openings, community prompts, and daily presence content.",
+          },
+          {
+            label: "IG Reels",
+            title: "Video hook & visual rhythm",
+            body: "Use IG Reels to study the first 3 seconds, on-screen text, camera pattern, edit pacing, caption, and save/share triggers.",
+          },
+        ]}
+        tip={
+          <>
+            Before pressing Mark, ask: “Can I explain why this works in one sentence?”
+            If yes, mark it as Carousel / Reel / 攻略圖. If no, skip it.
+          </>
+        }
+      />
 
       <section className="flex flex-col gap-3">
         <div className="flex gap-2 overflow-x-auto pb-1">

@@ -1,4 +1,5 @@
 import { Bookmark } from "lucide-react";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { PostCard } from "@/components/posts/post-card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -25,6 +26,29 @@ export default async function MarkedPage() {
           {posts.length} saved
         </Badge>
       </header>
+
+      <UsageGuide
+        title="Marked = your weekly review queue."
+        description="This tab collects the references you already decided are worth studying. Use it to turn saved inspiration into your own drafts instead of letting good examples rot in the feed."
+        steps={[
+          {
+            label: "Review",
+            title: "Batch-process saved ideas",
+            body: "Once or twice a week, review only this tab. It is smaller and higher quality than the live feed.",
+          },
+          {
+            label: "Decode",
+            title: "Name why each post works",
+            body: "Write down the hook, tension, proof, payoff, CTA, or visual pattern before creating your own version.",
+          },
+          {
+            label: "Use",
+            title: "Mark used after publishing",
+            body: "After you turn a reference into a post, mark it as used so the queue stays clean and you avoid repeating the same angle.",
+          },
+        ]}
+        tip="If an item no longer feels useful during review, unmark it. A clean queue is more valuable than a huge archive."
+      />
 
       {posts.length ? (
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">

@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { UsageGuide } from "@/components/app/usage-guide";
 import { SourceIcon } from "@/components/posts/source-icon";
 import { removeCompetitorAction } from "@/lib/actions";
 import { getCompetitors } from "@/lib/data";
@@ -48,6 +49,29 @@ export default async function CompetitorsPage() {
           就追蹤嗰個帳號;呢度睇晒你 watch 緊嘅對手 + 已存咗幾多條佢哋嘅 post。
         </p>
       </header>
+
+      <UsageGuide
+        title="競爭對手 = accounts you want to learn from or beat."
+        description="This tab is not for stalking random creators. It is a watchlist for accounts whose hooks, offers, formats, or audience reactions can improve your own content strategy."
+        steps={[
+          {
+            label: "Add",
+            title: "Track from any post card",
+            body: "Press the + beside a card's source badge when the creator repeatedly makes content worth studying.",
+          },
+          {
+            label: "Audit",
+            title: "Compare patterns, not ego",
+            body: "Look for their recurring hooks, topic pillars, formats, CTAs, and what their audience rewards.",
+          },
+          {
+            label: "Remove",
+            title: "Keep the list sharp",
+            body: "Remove accounts that no longer teach you anything. A tight watchlist beats a noisy competitor folder.",
+          },
+        ]}
+        tip="Best use: pick 5–10 accounts max per niche, then review what they do repeatedly that you can ethically adapt."
+      />
 
       {competitors.length ? (
         <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
