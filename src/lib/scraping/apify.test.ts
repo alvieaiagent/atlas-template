@@ -4,6 +4,8 @@ import malformedFixture from "@/lib/scraping/__fixtures__/malformed.json";
 import threadsFixture from "@/lib/scraping/__fixtures__/threads.json";
 import xFixture from "@/lib/scraping/__fixtures__/x.json";
 import {
+  actorBySource,
+  buildActorInput,
   normalizeApifyItem,
   normalizeApifyItems,
   type NormalizedPostInsert,
@@ -27,6 +29,23 @@ function assertNormalizedShape(item: NormalizedPostInsert, source: Source) {
 }
 
 describe("Apify normalizer", () => {
+  it("uses search-capable feed actors and valid search inputs", () => {
+    expect(actorBySource.x).toBe("khadinakbar/x-twitter-search-scraper");
+    expect(actorBySource.threads).toBe("igview-owner/threads-search-scraper");
+    expect(actorBySource.ig).toBe("apify/instagram-hashtag-scraper");
+
+    expect(buildActorInput("threads", '"prompt engineering" OR "ai tool"', null)).toMatchObject({
+      searchQuery: "prompt engineering OR ai tool",
+      sort: "recent",
+      maxPages: 1,
+    });
+    expect(buildActorInput("ig", '"prompt engineering" OR "ai tool"', null)).toMatchObject({
+      hashtags: ["promptengineering", "aitool"],
+      resultsType: "posts",
+      resultsLimit: 10,
+    });
+  });
+
   it.each(cases)("normalizes $source fixture", ({ source, fixture, expectedHandle }) => {
     const normalized = normalizeApifyItem(source, categoryId, fixture[0]);
 

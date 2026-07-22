@@ -9,9 +9,12 @@ import type { Category, Engagement, MediaItem, Source } from "@/lib/types";
 import type { Database } from "@/lib/database.types";
 
 export const actorBySource: Record<Source, string> = {
-  x: "apidojo/twitter-scraper-lite",
-  threads: "logical_scrapers/threads-post-scraper",
-  ig: "apify/instagram-scraper",
+  // Search-capable actors for the Inspiration feed. The previous X actor rejects
+  // API runs on Apify Free plans, and the previous Threads actor was a single
+  // post scraper that requires startUrls, so feed refreshes could run but save 0.
+  x: "khadinakbar/x-twitter-search-scraper",
+  threads: "igview-owner/threads-search-scraper",
+  ig: "apify/instagram-hashtag-scraper",
   // YouTube resolves via oEmbed (no Apify actor); placeholder keeps the map total.
   youtube: "youtube-oembed",
   // Facebook uses Apify first, then Graph oEmbed fallback when actor/proxy fails.
@@ -80,11 +83,19 @@ function readNumber(record: UnknownRecord, keys: string[]): number {
 function readAuthor(record: UnknownRecord): { handle: string; name: string; verified: boolean } {
   const authorRecord = readNestedRecord(record, ["author", "user", "owner"]);
   const handle =
-    readString(record, ["authorHandle", "username", "ownerUsername", "userName", "handle"]) ??
+    readString(record, [
+      "authorHandle",
+      "authorUsername",
+      "username",
+      "ownerUsername",
+      "userName",
+      "handle",
+      "screenName",
+    ]) ??
     readString(authorRecord, ["username", "handle", "screenName", "userName"]) ??
     "unknown";
   const name =
-    readString(record, ["authorName", "fullName", "ownerFullName"]) ??
+    readString(record, ["authorName", "authorFullName", "fullName", "ownerFullName", "name"]) ??
     readString(authorRecord, ["name", "fullName", "displayName"]) ??
     handle;
   const verified =
@@ -137,16 +148,17 @@ function readEngagement(record: UnknownRecord): Engagement {
       "viewsCount",
       "views",
     ]),
-    like: readNumber(record, ["likeCount", "likesCount", "likes", "favoriteCount"]),
+    like: readNumber(record, ["likeCount", "likesCount", "likes", "favoriteCount", "like_count"]),
     comment: readNumber(record, [
       "commentCount",
       "commentsCount",
       "replyCount",
       "directReplyCount",
       "comments",
+      "comment_count",
     ]),
     save: readNumber(record, ["saveCount", "bookmarkCount", "bookmarks"]),
-    share: readNumber(record, ["shareCount", "reshareCount", "retweetCount", "shares"]),
+    share: readNumber(record, ["shareCount", "reshareCount", "retweetCount", "shares", "share_count"]),
   };
 }
 
@@ -160,25 +172,33 @@ export function buildQuery(category: Category): string {
 }
 
 export function buildActorInput(source: Source, query: string, cursor: string | null): UnknownRecord {
+  const maxItems = 10;
   switch (source) {
     case "x":
       return {
-        searchTerms: [query],
-        maxItems: 50,
+        query,
+        searchQuery: query,
+        queries: [query],
+        maxItems,
+        maxResults: maxItems,
+        limit: maxItems,
         sort: "Latest",
+        searchMode: "Latest",
         cursor,
       };
     case "threads":
       return {
-        searchQueries: [query],
-        maxItems: 50,
+        searchQuery: query.replaceAll("\"", ""),
+        sort: "recent",
+        maxPages: 1,
+        maxItems,
         cursor,
       };
     case "ig":
       return {
-        search: query,
+        hashtags: hashtagsFromQuery(query),
         resultsType: "posts",
-        resultsLimit: 50,
+        resultsLimit: maxItems,
         onlyPostsNewerThan: "7 days",
       };
     case "youtube":
@@ -195,6 +215,17 @@ export function buildActorInput(source: Source, query: string, cursor: string | 
   }
 }
 
+function hashtagsFromQuery(query: string): string[] {
+  const tags = query
+    .split(/\s+OR\s+/i)
+    .map((term) => term.replaceAll("\"", "").trim())
+    .map((term) => term.replace(/[^a-z0-9_]/gi, ""))
+    .filter((term) => term.length >= 2)
+    .slice(0, 3);
+
+  return tags.length ? tags : ["ai"];
+}
+
 function stableHash(value: string): string {
   let hash = 5381;
 
@@ -208,9 +239,9 @@ function stableHash(value: string): string {
 function readText(source: Source, item: UnknownRecord): string {
   const directText =
     source === "x"
-      ? readString(item, ["fullText", "text", "caption", "description"])
+      ? readString(item, ["fullText", "text", "caption", "description", "full_text"])
       : source === "threads"
-        ? readString(item, ["text", "caption", "description", "title"])
+        ? readString(item, ["text", "caption", "text_content", "description", "title"])
         : readString(item, ["caption", "captionText", "text", "description"]);
 
   if (directText) {
@@ -224,9 +255,9 @@ function readText(source: Source, item: UnknownRecord): string {
 function readExternalId(source: Source, item: UnknownRecord, text: string, postedAt: string): string {
   const id =
     source === "x"
-      ? readString(item, ["tweetId", "id", "postId", "url"])
+      ? readString(item, ["tweetId", "tweet_id", "id", "postId", "url"])
       : source === "threads"
-        ? readString(item, ["postId", "id", "url", "code"])
+        ? readString(item, ["postId", "thread_id", "id", "url", "thread_url", "code"])
         : readString(item, ["shortCode", "id", "postId", "url"]);
 
   if (id) {
@@ -459,6 +490,7 @@ export function normalizeApifyItem(
     "link",
     "twitterUrl",
     "threadUrl",
+    "thread_url",
     "shareUrl",
   ]);
   const url =
