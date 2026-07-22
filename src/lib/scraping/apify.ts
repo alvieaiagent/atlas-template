@@ -243,11 +243,13 @@ function stableHash(value: string): string {
 }
 
 function readText(source: Source, item: UnknownRecord): string {
+  const captionRecord = readNestedRecord(item, ["caption"]);
   const directText =
     source === "x"
       ? readString(item, ["fullText", "text", "caption", "description", "full_text"])
       : source === "threads"
-        ? readString(item, ["text", "caption", "text_content", "description", "title"])
+        ? readString(item, ["text", "caption", "text_content", "description", "title"]) ??
+          readString(captionRecord, ["text", "content"])
         : readString(item, ["caption", "captionText", "text", "description"]);
 
   if (directText) {
@@ -403,6 +405,9 @@ function threadsRecord(thread: UnknownRecord): UnknownRecord {
 
   return {
     ...thread,
+    text:
+      readString(thread, ["text", "caption", "text_content"]) ??
+      readString(readNestedRecord(thread, ["caption"]), ["text", "content"]),
     verified: thread.user_verified === true,
     likeCount: thread.like_count,
     replyCount: thread.reply_count,
@@ -476,6 +481,10 @@ export function normalizeApifyItem(
   const record =
     source === "threads" && isRecord(item.thread)
       ? threadsRecord(item.thread)
+      : source === "threads" && isRecord(item.post)
+        ? threadsRecord(item.post)
+      : source === "threads" && isRecord(item.data)
+        ? threadsRecord(item.data)
       : source === "facebook"
         ? facebookRecord(item)
       : item;

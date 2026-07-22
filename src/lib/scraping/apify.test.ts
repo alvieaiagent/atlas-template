@@ -64,6 +64,26 @@ describe("Apify normalizer", () => {
     warn.mockRestore();
   });
 
+  it("normalizes Threads search actor output with nested caption text", () => {
+    const normalized = normalizeApifyItem("threads", categoryId, {
+      post: {
+        thread_id: "abc123",
+        thread_url: "https://www.threads.com/@example/post/abc123",
+        timestamp: "2026-07-22T19:41:50.000Z",
+        caption: { text: "A useful Threads search result about prompt systems." },
+        user: { username: "example", full_name: "Example Creator", is_verified: true },
+        like_count: 12,
+        comment_count: 3,
+      },
+    });
+
+    expect(normalized).not.toBeNull();
+    expect(normalized!.text).toContain("useful Threads");
+    expect(normalized!.author_handle).toBe("example");
+    expect(normalized!.url).toBe("https://www.threads.com/@example/post/abc123");
+    expect(normalized!.engagement).toMatchObject({ like: 12, comment: 3 });
+  });
+
   it("falls back to a valid posted_at and stable generated external id", () => {
     const normalized = normalizeApifyItem("x", categoryId, {
       fullText: "No id and invalid date, but still normalizable.",
