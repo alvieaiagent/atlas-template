@@ -248,8 +248,15 @@ function readText(source: Source, item: UnknownRecord): string {
     source === "x"
       ? readString(item, ["fullText", "text", "caption", "description", "full_text"])
       : source === "threads"
-        ? readString(item, ["text", "caption", "text_content", "description", "title"]) ??
-          readString(captionRecord, ["text", "content"])
+        ? readString(item, [
+            "text",
+            "captionText",
+            "caption_text",
+            "caption",
+            "text_content",
+            "description",
+            "title",
+          ]) ?? readString(captionRecord, ["text", "content"])
         : readString(item, ["caption", "captionText", "text", "description"]);
 
   if (directText) {

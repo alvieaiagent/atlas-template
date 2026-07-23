@@ -64,6 +64,27 @@ describe("Apify normalizer", () => {
     warn.mockRestore();
   });
 
+  it("normalizes current flat Threads search actor output with captionText", () => {
+    const normalized = normalizeApifyItem("threads", categoryId, {
+      postId: "1234567890",
+      postCode: "ABC123",
+      postUrl: "https://www.threads.com/@example/post/ABC123",
+      userId: "u1",
+      username: "example",
+      isVerified: true,
+      captionText: "Current Threads actor flat result text.",
+      like_count: 12,
+      comment_count: 3,
+      imageUrl: "https://example.com/image.jpg",
+    });
+
+    expect(normalized).not.toBeNull();
+    expect(normalized!.text).toBe("Current Threads actor flat result text.");
+    expect(normalized!.author_handle).toBe("example");
+    expect(normalized!.external_id).toBe("threads:1234567890");
+    expect(normalized!.url).toBe("https://www.threads.com/@example/post/ABC123");
+  });
+
   it("normalizes Threads search actor output with nested caption text", () => {
     const normalized = normalizeApifyItem("threads", categoryId, {
       post: {
