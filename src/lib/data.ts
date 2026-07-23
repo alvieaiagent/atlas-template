@@ -2,6 +2,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { mockPosts } from "@/lib/mock-data";
 import { getLocalCategories } from "@/lib/local-categories";
 import { getLocalCompetitors } from "@/lib/local-watchlist";
+import { getLocalFeedRows } from "@/lib/local-feed";
 import { getLocalLibraryPosts, getLocalMarkedPosts } from "@/lib/local-library";
 import { mapCategory, mapPost } from "@/lib/mappers";
 import {
@@ -14,7 +15,7 @@ import {
 // works without a login session. (Pre-public-deploy TODO: switch back to the authenticated
 // client + per-user RLS.)
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { NOISE_RE } from "@/lib/scraping/feeds-free";
+import { NOISE_RE, RADAR_CATEGORY_IDS } from "@/lib/scraping/feeds-free";
 import type {
   Category,
   Competitor,
@@ -149,7 +150,18 @@ export async function getPosts(filters: PostFilters): Promise<Post[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return filterMockPosts(filters);
+    // Crawled rows from local Force Refresh first, then the mock seeds; dedupe
+    // by external id so a re-crawled seed post doesn't show twice.
+    const markedExternalIds = new Set(
+      (await getLocalLibraryPosts()).filter((post) => post.marked).map((post) => post.externalId),
+    );
+    const localRows = await getLocalFeedRows();
+    const localPosts = localRows.map((row) =>
+      mapPost(row, markedExternalIds.has(row.external_id) ? new Set([row.id]) : new Set<string>()),
+    );
+    const seen = new Set(localPosts.map((post) => post.externalId));
+    const merged = [...localPosts, ...mockPosts.filter((post) => !seen.has(post.externalId))];
+    return filterPostList(merged, filters);
   }
 
   let query = supabase
@@ -210,7 +222,24 @@ export async function getRadarPosts(filters: RadarFilters = {}): Promise<Post[]>
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return [];
+    // Local mock mode: radar rows crawled by the free-feed refresh live in the
+    // .hermes feed store, tagged with the fixed radar category ids.
+    const rows = await getLocalFeedRows();
+    const lowerBound = getTimeLowerBound(filters.time);
+    // Saved state lives in the local library store (markPostAction), not the feed rows.
+    const markedExternalIds = new Set(
+      (await getLocalLibraryPosts()).filter((post) => post.marked).map((post) => post.externalId),
+    );
+    return rows
+      .filter((row) => row.category_ids.some((id) => RADAR_CATEGORY_IDS.includes(id)))
+      .filter((row) =>
+        filters.radarCategory ? row.category_ids.includes(filters.radarCategory) : true,
+      )
+      .filter((row) => (lowerBound ? row.posted_at >= lowerBound : true))
+      .filter((row) => (filters.savedOnly ? markedExternalIds.has(row.external_id) : true))
+      .map((row) =>
+        mapPost(row, markedExternalIds.has(row.external_id) ? new Set([row.id]) : new Set<string>()),
+      );
   }
 
   const categories = await getCategories();
@@ -413,10 +442,10 @@ export async function getCompetitorKeySet(): Promise<Set<string>> {
   return new Set((data ?? []).map((c) => competitorKey(c.source, c.handle)));
 }
 
-function filterMockPosts(filters: PostFilters): Post[] {
+function filterPostList(posts: Post[], filters: PostFilters): Post[] {
   const lowerBound = getTimeLowerBound(filters.time);
 
-  return mockPosts.filter((post) => {
+  return posts.filter((post) => {
     if (filters.categoryId && !post.categoryIds.includes(filters.categoryId)) {
       return false;
     }

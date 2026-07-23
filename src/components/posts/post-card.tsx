@@ -106,8 +106,11 @@ export function PostCard({
       {firstMedia ? <PostThumbnail post={post} media={firstMedia} view={view} /> : null}
 
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <header className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
+        {/* flex-wrap + basis-40: the author name always gets readable width;
+            the source chip / actions wrap to a second row on narrow cards
+            instead of squeezing the name down to one letter. */}
+        <header className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+          <div className="flex min-w-0 flex-1 basis-40 items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-50 text-sm font-semibold text-blue-800">
               {post.authorName.slice(0, 1).toUpperCase()}
             </div>
@@ -211,9 +214,9 @@ export function PostCard({
           return (
             <div className="rounded-md border border-blue-100 bg-blue-50 p-2.5 text-xs leading-5 text-slate-700">
               <p className="font-bold text-blue-800">
-                Janice executive summary
-                {summary.mode === "heuristic" ? (
-                  <span className="ml-1.5 font-normal text-slate-400">keyword draft — no LLM key</span>
+                {summary.title}
+                {summary.mode === "heuristic" && summary.draftNote ? (
+                  <span className="ml-1.5 font-normal text-slate-400">{summary.draftNote}</span>
                 ) : null}
               </p>
               <p className="mt-1 font-bold text-slate-950">{summary.headline}</p>

@@ -111,7 +111,7 @@ export default async function InspirationPage({
     source: activeSources,
   });
   const competitorKeys = await getCompetitorKeySet();
-  const janiceSummaries = await getJaniceSummaries(posts);
+  const janiceSummaries = await getJaniceSummaries(posts, language);
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">

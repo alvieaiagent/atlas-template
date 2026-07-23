@@ -1,6 +1,8 @@
 import { ApifyClient } from "apify-client";
 import type { Json } from "@/lib/database.types";
 import { getServerEnv } from "@/lib/env";
+import { getLocalCategories } from "@/lib/local-categories";
+import { upsertLocalFeedRows } from "@/lib/local-feed";
 import { mapCategory, parseMedia } from "@/lib/mappers";
 import { warmThumbnailCache } from "@/lib/thumbnail-cache";
 import { buildSinglePostInput } from "@/lib/link-source";
@@ -1588,6 +1590,69 @@ function shouldSkip(lastRunAt: string | null, force: boolean): boolean {
   return Date.now() - new Date(lastRunAt).getTime() < 1000 * 60 * 15;
 }
 
+// Mock-mode variant of refreshInspirationFeed: same actors and normalization,
+// but categories come from the local store and results land in the local feed
+// store. No cursor tracking — the UI always passes force=true anyway.
+async function refreshLocalInspirationFeed(
+  token: string,
+  opts?: {
+    categoryFilter?: (category: Category) => boolean;
+    sources?: Source[];
+  },
+): Promise<RefreshResult[]> {
+  const allCategories = await getLocalCategories();
+  const categories = opts?.categoryFilter
+    ? allCategories.filter(opts.categoryFilter)
+    : allCategories;
+  const client = new ApifyClient({ token });
+  const sources: Source[] = opts?.sources ?? ["x", "threads", "ig"];
+  const results: RefreshResult[] = [];
+
+  for (const category of categories) {
+    const query = buildQuery(category);
+    if (!query) {
+      continue;
+    }
+
+    for (const source of sources) {
+      try {
+        const run = await client
+          .actor(actorBySource[source])
+          .call(buildActorInput(source, query, null));
+        const datasetId = run.defaultDatasetId;
+        if (!datasetId) {
+          results.push({ source, categoryId: category.id, fetched: 0, skipped: false, error: "Actor run did not return a dataset" });
+          continue;
+        }
+        const dataset = await client.dataset(datasetId).listItems({ limit: 25 });
+        const items = normalizeApifyItems(source, category.id, dataset.items);
+        await upsertLocalFeedRows(items);
+        if (items.length > 0) {
+          const warm = await warmThumbnailCache(
+            items.flatMap((item) =>
+              parseMedia(item.media ?? [])
+                .filter((media) => media.type === "image")
+                .map((media) => media.url),
+            ),
+          );
+          console.log("[thumbnail warm local]", JSON.stringify({ source, categoryId: category.id, ...warm }));
+        }
+        results.push({ source, categoryId: category.id, fetched: items.length, skipped: false });
+      } catch (error) {
+        results.push({
+          source,
+          categoryId: category.id,
+          fetched: 0,
+          skipped: false,
+          error: error instanceof Error ? error.message : "Unknown Apify error",
+        });
+      }
+    }
+  }
+
+  return results;
+}
+
 export async function refreshInspirationFeed(
   force = false,
   opts?: {
@@ -1598,16 +1663,22 @@ export async function refreshInspirationFeed(
   const env = getServerEnv();
   const supabase = createSupabaseAdminClient();
 
-  if (!supabase || !env.APIFY_TOKEN) {
+  if (!env.APIFY_TOKEN) {
     return [
       {
         source: "x",
         categoryId: "env",
         fetched: 0,
         skipped: true,
-        error: "Missing Supabase service role or APIFY_TOKEN",
+        error: "Missing APIFY_TOKEN",
       },
     ];
+  }
+
+  // Local mock mode: crawl with Apify but persist into the .hermes feed store
+  // instead of Supabase, so Force Refresh works on the Mini too.
+  if (!supabase) {
+    return refreshLocalInspirationFeed(env.APIFY_TOKEN, opts);
   }
 
   const { data: categoryRows, error: categoryError } = await supabase

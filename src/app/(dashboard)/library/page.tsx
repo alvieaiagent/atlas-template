@@ -140,7 +140,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   });
 
   const [allPosts, competitorKeys] = await Promise.all([getLibraryPosts(), getCompetitorKeySet()]);
-  const janiceSummaries = await getJaniceSummaries(allPosts);
+  const janiceSummaries = await getJaniceSummaries(allPosts, language);
   const autoTopics = buildAutoTopics(allPosts);
   const activeTopic = autoTopics.some((item) => item.slug === topic) ? topic : undefined;
   const posts = activeTopic ? autoTopics.find((item) => item.slug === activeTopic)?.posts ?? [] : allPosts;

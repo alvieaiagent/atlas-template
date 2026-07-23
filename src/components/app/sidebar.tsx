@@ -46,10 +46,11 @@ export function Sidebar({ language }: { language: Language }) {
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-blue-600 text-white">
           <Sparkles className="h-5 w-5" />
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-slate-950">Atlas V2</p>
           <p className="text-xs text-slate-500">Strategic Intelligence</p>
         </div>
+        <LanguageToggle language={language} />
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
         {navItems[language].map((item) => {
@@ -75,8 +76,7 @@ export function Sidebar({ language }: { language: Language }) {
         })}
       </nav>
       <div className="border-t border-slate-200 p-3">
-        <LanguageToggle language={language} />
-        <p className="mt-3 text-xs text-slate-500">Janice-only briefings · no sub-agent POVs</p>
+        <p className="text-xs text-slate-500">Janice-only briefings · no sub-agent POVs</p>
       </div>
     </aside>
   );

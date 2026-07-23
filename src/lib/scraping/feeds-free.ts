@@ -1,4 +1,5 @@
 import type { Json } from "@/lib/database.types";
+import { upsertLocalFeedRows } from "@/lib/local-feed";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getServerEnv } from "@/lib/env";
 import { geminiGenerateText } from "@/lib/integrations/gemini";
@@ -9,9 +10,10 @@ import { geminiGenerateText } from "@/lib/integrations/gemini";
 // climate/policy/"AI bubble" op-eds.
 
 // Radar lane categories (sortOrder >= 100). Keep in sync with default-categories.ts.
-const RADAR_NEWS = "a1aa0001-0001-4001-8001-000000000001";
-const RADAR_LABS = "a1aa0002-0002-4002-8002-000000000002";
-const RADAR_DISCOVERY = "a1aa0003-0003-4003-8003-000000000003";
+export const RADAR_NEWS = "a1aa0001-0001-4001-8001-000000000001";
+export const RADAR_LABS = "a1aa0002-0002-4002-8002-000000000002";
+export const RADAR_DISCOVERY = "a1aa0003-0003-4003-8003-000000000003";
+export const RADAR_CATEGORY_IDS = [RADAR_NEWS, RADAR_LABS, RADAR_DISCOVERY];
 
 // AI-topic gate (for mixed-source feeds: Simon Willison / Product Hunt / Show HN).
 const AI_RE =
@@ -312,9 +314,6 @@ ${list}`;
  */
 export async function refreshRadarFromFeeds(): Promise<FeedResult[]> {
   const supabase = createSupabaseAdminClient();
-  if (!supabase) {
-    return [{ source: "-", fetched: 0, error: "Supabase service role missing" }];
-  }
 
   const sources: { name: string; fn: () => Promise<FeedInsert[]> }[] = [
     { name: "github", fn: fetchGitHub },
@@ -375,10 +374,15 @@ export async function refreshRadarFromFeeds(): Promise<FeedResult[]> {
   // One Gemini pass over everything → Cantonese explainer + worth-posting score.
   const curated = await curate(all);
   if (curated.length > 0) {
-    const { error } = await supabase
-      .from("posts")
-      .upsert(curated, { onConflict: "external_id" });
-    if (error) results.push({ source: "upsert", fetched: 0, error: error.message });
+    if (supabase) {
+      const { error } = await supabase
+        .from("posts")
+        .upsert(curated, { onConflict: "external_id" });
+      if (error) results.push({ source: "upsert", fetched: 0, error: error.message });
+    } else {
+      // Local mock mode: persist to the .hermes feed store instead.
+      await upsertLocalFeedRows(curated);
+    }
   }
   return results;
 }

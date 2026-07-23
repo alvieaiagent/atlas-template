@@ -121,14 +121,27 @@ export default async function SettingsPage() {
       </section>
 
       <section className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-950">Force refresh scope shells</h2>
-        <p className="mt-1 text-sm leading-6 text-slate-600">Show scope before running; do not pretend exact cost if unavailable.</p>
+        <h2 className="text-lg font-bold text-slate-950">Force refresh</h2>
+        <p className="mt-1 text-sm leading-6 text-slate-600">
+          <strong className="text-slate-950">Each run spends Apify credits</strong> (all topic categories × selected sources). Radar 抓最新 uses free feeds — no credits.
+        </p>
         <div className="mt-3 flex flex-wrap gap-2">
-          {["Refresh All P0 Watchlist", "Refresh YouTube Channels", "Refresh Instagrammers", "Refresh This Creator", "Refresh This Source", "Refresh This Learning Area"].map((label) => (
-            <button key={label} type="button" className="min-h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700">{label}</button>
+          {[
+            { label: "Refresh All Sources", sources: "all" },
+            { label: "Refresh Threads", sources: "threads" },
+            { label: "Refresh IG", sources: "ig" },
+            { label: "Refresh X", sources: "x" },
+          ].map((scope) => (
+            <form key={scope.sources} action="/api/refresh" method="post">
+              <input name="sources" type="hidden" value={scope.sources} />
+              <button type="submit" className="min-h-10 rounded-md border border-blue-300 bg-white px-3 text-sm font-bold text-blue-800 transition hover:bg-blue-50">{scope.label}</button>
+            </form>
           ))}
+          <form action="/api/refresh/radar" method="post">
+            <button type="submit" className="min-h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 transition hover:bg-blue-50">Radar 抓最新 (free)</button>
+          </form>
         </div>
-        <p className="mt-3 text-xs text-slate-500">Example scope: latest 3 videos from selected YouTube channels and latest 6 posts from selected IG creators.</p>
+        <p className="mt-3 text-xs text-slate-500">Per-creator / YouTube-channel / learning-area scoped crawls are not built yet — watchlist-scoped refresh is a later phase. Buttons above run real crawls now.</p>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4">

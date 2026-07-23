@@ -65,7 +65,7 @@ export default async function MarkedPage() {
     },
   });
   const posts = await getMarkedPosts();
-  const janiceSummaries = await getJaniceSummaries(posts);
+  const janiceSummaries = await getJaniceSummaries(posts, language);
   const competitorKeys = await getCompetitorKeySet();
 
   return (
