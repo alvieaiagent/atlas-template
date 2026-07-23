@@ -1,8 +1,9 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { mockMarkedPosts, mockPosts } from "@/lib/mock-data";
+import { mockPosts } from "@/lib/mock-data";
 import { getLocalCategories } from "@/lib/local-categories";
+import { getLocalCompetitors } from "@/lib/local-watchlist";
+import { getLocalLibraryPosts, getLocalMarkedPosts } from "@/lib/local-library";
 import { mapCategory, mapPost } from "@/lib/mappers";
-import { v1LibraryPosts } from "@/lib/v1-library-seed";
 import {
   FALLBACK_DAILY_SUMMARIES,
   type DailySummary,
@@ -278,7 +279,7 @@ export async function getMarkedPosts(): Promise<MarkedPost[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return mockMarkedPosts;
+    return getLocalMarkedPosts();
   }
 
   const { data, error } = await supabase
@@ -314,9 +315,7 @@ export async function getLibraryPosts(purpose?: Purpose): Promise<Post[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return purpose
-      ? v1LibraryPosts.filter((post) => post.purpose === purpose)
-      : v1LibraryPosts;
+    return getLocalLibraryPosts(purpose);
   }
 
   let query = supabase
@@ -353,7 +352,15 @@ export async function getCompetitors(): Promise<CompetitorRow[]> {
   noStore();
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return [];
+    const posts = await getLocalLibraryPosts();
+    const counts = new Map<string, number>();
+    posts.forEach((post) => {
+      counts.set(post.authorHandle.toLowerCase(), (counts.get(post.authorHandle.toLowerCase()) ?? 0) + 1);
+    });
+    return (await getLocalCompetitors()).map((competitor) => ({
+      ...competitor,
+      postCount: counts.get(competitor.handle.toLowerCase()) ?? 0,
+    }));
   }
 
   const { data: comps, error } = await supabase
@@ -393,7 +400,7 @@ export async function getCompetitorKeySet(): Promise<Set<string>> {
   noStore();
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return new Set();
+    return new Set((await getLocalCompetitors()).map((c) => competitorKey(c.source, c.handle)));
   }
 
   const { data, error } = await supabase

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { CardActions } from "@/components/posts/card-actions";
 import { SourceIcon } from "@/components/posts/source-icon";
 import { DeleteButton } from "@/components/posts/delete-button";
-import { proxiedImage } from "@/lib/image-proxy";
+import { PostThumbnail } from "@/components/posts/post-thumbnail";
 
 type PostCardProps = {
   post: Post;
@@ -66,6 +66,17 @@ function formatDate(value: string): string {
   }).format(new Date(value));
 }
 
+function summarizePost(post: Post): string {
+  const text = post.text.replace(/\s+/g, " ").trim();
+  const lower = text.toLowerCase();
+  if (!text) return "Saved reference with no extracted caption yet. Open the source link before using it.";
+  if (lower.includes("course") || text.includes("課程") || text.includes("證書")) return "Useful AI learning/career reference — save for capability building, certificate positioning, and interview examples.";
+  if (lower.includes("prompt") || lower.includes("social media manager") || lower.includes("followers")) return "Creator-growth prompt/reference — useful for turning AI workflows into repeatable content or distribution tactics.";
+  if (lower.includes("vibe code") || lower.includes("cron") || lower.includes("skill") || text.includes("自動")) return "Automation/system-building lesson — the value is the repeatable workflow, not just the one-off tool.";
+  if (text.includes("算命") || text.includes("八字") || text.includes("紫微")) return "Consumer AI trend signal — people pay attention when AI is packaged as entertainment, identity, or self-discovery.";
+  return `${text.slice(0, 150)}${text.length > 150 ? "…" : ""}`;
+}
+
 export function PostCard({
   post,
   view,
@@ -98,29 +109,7 @@ export function PostCard({
         <DeleteButton postId={post.id} />
       </div>
 
-      {firstMedia ? (
-        <div
-          className={cn(
-            "relative aspect-[4/5] bg-slate-100",
-            view === "list" ? "md:aspect-auto md:min-h-full" : "shrink-0",
-          )}
-        >
-          {firstMedia.type === "image" ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              alt=""
-              className="h-full w-full object-cover"
-              src={proxiedImage(firstMedia.url)}
-            />
-          ) : (
-            <video
-              className="h-full w-full object-cover"
-              src={firstMedia.url}
-              controls
-            />
-          )}
-        </div>
-      ) : null}
+      {firstMedia ? <PostThumbnail post={post} media={firstMedia} view={view} /> : null}
 
       <div className="flex flex-1 flex-col gap-4 p-4">
         <header className="flex items-start justify-between gap-3">
@@ -222,6 +211,11 @@ export function PostCard({
             )}
           </a>
         ) : null}
+
+        <div className="rounded-md border border-blue-100 bg-blue-50 p-2.5 text-xs leading-5 text-slate-700">
+          <p className="font-bold text-blue-800">Janice summary</p>
+          <p className="mt-1">{summarizePost(post)}</p>
+        </div>
 
         {stats.length ? (
           <div className="mt-auto flex flex-wrap items-center gap-3 text-xs text-slate-500">

@@ -45,3 +45,5 @@ supabase/.temp/
 
 # Atlas local mock-mode runtime data
 .hermes/local-categories.json
+.hermes/local-library-posts.json
+.hermes/local-watchlist.json

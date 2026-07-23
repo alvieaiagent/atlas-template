@@ -13,6 +13,12 @@ import {
   deleteLocalCategory,
   updateLocalCategory,
 } from "@/lib/local-categories";
+import {
+  deleteLocalLibraryPost,
+  updateLocalLibraryPost,
+  upsertLocalLibraryPost,
+} from "@/lib/local-library";
+import { removeLocalCompetitor, upsertLocalCompetitor } from "@/lib/local-watchlist";
 import { parseEngagement, parseMedia, splitCsv } from "@/lib/mappers";
 import { parsePostPayload, postToInsert } from "@/lib/post-payload";
 import {
@@ -44,10 +50,14 @@ export async function markPostAction(
   }
   const supabase = createSupabaseAdminClient();
 
-  // Mock mode or unparseable payload: nothing to persist, stay green.
+  // Mock mode or unparseable payload: persist to local review store when possible.
   if (!supabase || !post) {
+    if (post) {
+      await upsertLocalLibraryPost({ ...post, marked: true });
+    }
     revalidatePath("/inspiration");
     revalidatePath("/marked");
+    revalidatePath("/library");
     return {
       ran: true,
       supabase: "skipped",
@@ -127,8 +137,13 @@ export async function unmarkPost(formData: FormData): Promise<void> {
     }
   }
 
+  if (!supabase && postId) {
+    await updateLocalLibraryPost(postId, { marked: false });
+  }
+
   revalidatePath("/inspiration");
   revalidatePath("/marked");
+  revalidatePath("/library");
 }
 
 // Toggle a Library post's "已經使用" flag — mark content you've already used.
@@ -145,6 +160,10 @@ export async function toggleUsedAction(formData: FormData): Promise<void> {
     if (error) {
       throw new Error(error.message);
     }
+  }
+
+  if (!supabase && postId) {
+    await updateLocalLibraryPost(postId, { used });
   }
 
   revalidatePath("/library");
@@ -650,6 +669,10 @@ export async function setPurposeAction(formData: FormData): Promise<void> {
     }
   }
 
+  if (!supabase) {
+    await updateLocalLibraryPost(postId, { purpose });
+  }
+
   revalidatePath("/library");
   revalidatePath("/inspiration");
 }
@@ -667,6 +690,10 @@ export async function deletePostAction(formData: FormData): Promise<void> {
     if (error) {
       throw new Error(error.message);
     }
+  }
+
+  if (!supabase) {
+    await deleteLocalLibraryPost(postId);
   }
 
   revalidatePath("/library");
@@ -720,6 +747,10 @@ export async function addCompetitorAction(formData: FormData): Promise<void> {
     }
   }
 
+  if (!supabase) {
+    await upsertLocalCompetitor({ source, handle, name: name || handle });
+  }
+
   revalidatePath("/competitors");
   revalidatePath("/library");
   revalidatePath("/inspiration");
@@ -751,6 +782,10 @@ export async function removeCompetitorAction(formData: FormData): Promise<void> 
     if (error) {
       throw new Error(error.message);
     }
+  }
+
+  if (!supabase) {
+    await removeLocalCompetitor(source, handle);
   }
 
   revalidatePath("/competitors");
