@@ -1,4 +1,6 @@
-export const GEMINI_TEXT_MODEL = "gemini-2.5-flash";
+// "-latest" alias: gemini-2.5-flash was retired for newer API keys (404
+// "no longer available to new users"); the alias tracks the current flash model.
+export const GEMINI_TEXT_MODEL = "gemini-flash-latest";
 
 type GeminiPart =
   | { text: string }
