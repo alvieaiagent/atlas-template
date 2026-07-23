@@ -55,7 +55,7 @@ export function PurposeBar({ post }: { post: Post }) {
           name="purpose"
           defaultValue={post.purpose}
           onChange={() => purposeFormRef.current?.requestSubmit()}
-          className="h-7 flex-1 rounded-md border border-zinc-800 bg-zinc-950 px-2 text-xs text-zinc-200 outline-none focus:border-sky-400"
+          className="h-7 flex-1 rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-700 outline-none focus:border-blue-400"
         >
           {PURPOSES.map((purpose) => (
             <option key={purpose.value} value={purpose.value}>
@@ -85,10 +85,10 @@ export function PurposeBar({ post }: { post: Post }) {
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[min(92vw,680px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-900 p-5 shadow-2xl">
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-950/50" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[min(92vw,680px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-slate-200 bg-white p-5 shadow-2xl">
             <div className="mb-4 flex items-start justify-between gap-3">
-              <Dialog.Title className="text-base font-semibold text-zinc-50">
+              <Dialog.Title className="text-base font-semibold text-slate-950">
                 {GENERATE_LABEL[state.purpose ?? post.purpose]} · {post.authorName}
               </Dialog.Title>
               <div className="flex shrink-0 items-center gap-3">
@@ -101,17 +101,17 @@ export function PurposeBar({ post }: { post: Post }) {
                       setTimeout(() => setCopied(false), 1500);
                     }
                   }}
-                  className="inline-flex items-center gap-1 text-xs text-sky-300 transition hover:text-blue-700"
+                  className="inline-flex items-center gap-1 text-xs text-blue-700 transition hover:text-blue-900"
                 >
                   <Copy className="h-3 w-3" />
                   {copied ? "已複製" : "複製"}
                 </button>
-                <Dialog.Close className="text-zinc-400 transition hover:text-zinc-100">
+                <Dialog.Close className="text-slate-500 transition hover:text-slate-950">
                   <X className="h-4 w-4" />
                 </Dialog.Close>
               </div>
             </div>
-            <pre className="whitespace-pre-wrap break-words rounded-md border border-zinc-800 bg-zinc-950 p-3 text-sm leading-6 text-zinc-200">
+            <pre className="whitespace-pre-wrap break-words rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-6 text-slate-800">
               {state.content ?? ""}
             </pre>
           </Dialog.Content>

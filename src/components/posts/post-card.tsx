@@ -88,7 +88,7 @@ export function PostCard({
   return (
     <article
       className={cn(
-        "relative overflow-hidden rounded-lg border border-zinc-850 bg-zinc-900 transition hover:border-zinc-700",
+        "relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:shadow-md",
         view === "list"
           ? "grid gap-0 md:grid-cols-[280px_1fr]"
           : "flex flex-col",
@@ -101,7 +101,7 @@ export function PostCard({
       {firstMedia ? (
         <div
           className={cn(
-            "relative aspect-[4/5] bg-zinc-950",
+            "relative aspect-[4/5] bg-slate-100",
             view === "list" ? "md:aspect-auto md:min-h-full" : "shrink-0",
           )}
         >
@@ -125,19 +125,19 @@ export function PostCard({
       <div className="flex flex-1 flex-col gap-4 p-4">
         <header className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-800 text-sm font-semibold text-zinc-200">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-50 text-sm font-semibold text-blue-800">
               {post.authorName.slice(0, 1).toUpperCase()}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <p className="truncate text-sm font-semibold text-zinc-50">
+                <p className="truncate text-sm font-semibold text-slate-950">
                   {post.authorName}
                 </p>
                 {post.verified ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-sky-300" />
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-blue-600" />
                 ) : null}
               </div>
-              <p className="truncate text-xs text-zinc-500">
+              <p className="truncate text-xs text-slate-500">
                 @{post.authorHandle} · {formatDate(post.postedAt)}
               </p>
             </div>
@@ -165,7 +165,7 @@ export function PostCard({
                   type="submit"
                   title="加入競爭對手"
                   aria-label="加入競爭對手"
-                  className="flex h-6 w-6 items-center justify-center rounded-md border border-zinc-800 text-zinc-400 transition hover:border-sky-500 hover:text-sky-300"
+                  className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
                 </button>
@@ -189,7 +189,7 @@ export function PostCard({
             {firstMedia ? (
             <p
               className={cn(
-                "whitespace-pre-wrap break-words text-sm leading-6 text-zinc-200",
+                "whitespace-pre-wrap break-words text-sm leading-6 text-slate-700",
                 compact && "line-clamp-3 text-xs leading-5",
               )}
             >
@@ -200,17 +200,17 @@ export function PostCard({
             // faint platform watermark so it reads as designed, not a plain block.
             <div
               className={cn(
-                "relative overflow-hidden rounded-md border-l-2 bg-zinc-950/60 p-2.5",
+                "relative overflow-hidden rounded-md border-l-2 bg-slate-50 p-2.5",
                 accentBorder[post.source],
               )}
             >
               <SourceIcon
                 source={post.source}
-                className="absolute -right-1 -top-1 h-9 w-9 text-zinc-800"
+                className="absolute -right-1 -top-1 h-9 w-9 text-slate-200"
               />
               <p
                 className={cn(
-                  "relative whitespace-pre-wrap break-words text-zinc-100",
+                  "relative whitespace-pre-wrap break-words text-slate-800",
                   compact
                     ? "line-clamp-4 text-xs leading-5"
                     : "text-sm leading-6",
@@ -224,7 +224,7 @@ export function PostCard({
         ) : null}
 
         {stats.length ? (
-          <div className="mt-auto flex flex-wrap items-center gap-3 text-xs text-zinc-500">
+          <div className="mt-auto flex flex-wrap items-center gap-3 text-xs text-slate-500">
             {stats.map(({ key, icon: Icon, value }) => (
               <span key={key} className="inline-flex items-center gap-1">
                 <Icon className="h-3.5 w-3.5" />

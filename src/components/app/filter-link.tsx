@@ -14,8 +14,8 @@ export function FilterLink({ href, active, children }: FilterLinkProps) {
       className={cn(
         "inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium transition",
         active
-          ? "border-sky-400 bg-sky-400 text-zinc-950"
-          : "border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:text-zinc-100",
+          ? "border-blue-500 bg-blue-600 text-white"
+          : "border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700",
       )}
       href={href}
     >
