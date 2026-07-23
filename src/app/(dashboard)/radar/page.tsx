@@ -94,8 +94,8 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
-          <p className="text-sm text-zinc-500">{copy.eyebrow}</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-zinc-50">
+          <p className="text-sm text-slate-600">{copy.eyebrow}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">
             {copy.title}
           </h1>
         </div>
@@ -176,7 +176,7 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
       </section>
 
       {radarCategories.length === 0 ? (
-        <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-8 text-center text-sm text-zinc-500">
+        <section className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-600">
           {copy.emptyCategories}
         </section>
       ) : posts.length ? (
@@ -196,7 +196,7 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
           ))}
         </section>
       ) : (
-        <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-8 text-center text-sm text-zinc-500">
+        <section className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-600">
           {savedTab
             ? copy.emptySaved
             : copy.emptyLatest}

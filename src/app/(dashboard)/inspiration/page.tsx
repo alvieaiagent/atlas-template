@@ -34,19 +34,19 @@ export default async function InspirationPage({
   const language = await getLanguage();
   const copy = pick(language, {
     en: {
-      eyebrow: "Live inspiration feed",
-      title: "Inspiration",
+      eyebrow: "Active Signals · last 90 days by default",
+      title: "Signals",
       refresh: "Force refresh",
-      guideTitle: "Inspiration = live feed for patterns you can reuse.",
+      guideTitle: "Signals = recent crawled/captured material Janice can triage.",
       guideDescription:
-        "This tab is for scanning fresh X, Threads, and IG Reels references. The job is not to collect links; the job is to spot a hook, angle, format, CTA, or visual rhythm you can remix into your own content.",
+        "This tab is for scanning fresh X, Threads, IG Reels, and manual-capture sources. The job is not to read everything; the job is to spot implications worth saving into Knowledge Bank.",
       xTitle: "Sharp takes & thread logic",
       xBody: "Use X to study first-line hooks, contrarian angles, argument flow, and thread structures for thought leadership posts.",
       threadsTitle: "Human voice & relatability",
       threadsBody: "Use Threads to study casual phrasing, confession-style openings, community prompts, and daily presence content.",
       reelsTitle: "Video hook & visual rhythm",
       reelsBody: "Use IG Reels to study the first 3 seconds, on-screen text, camera pattern, edit pacing, caption, and save/share triggers.",
-      tip: "Before pressing Mark, ask: “Can I explain why this works in one sentence?” If yes, mark it as Carousel / Reel / 攻略圖. If no, skip it.",
+      tip: "Before saving, ask: “Does this help Alvie’s career, business, CityU, AI usage, content creation, or partnerships?” If no, treat it as noise.",
       emptyTitle: "No posts match these filters yet.",
       emptyBody:
         "This usually means the filter is too narrow, the refresh has not found anything useful, or the source/category settings need tuning. Do not treat an empty feed as failure — use it to tighten the search.",
@@ -63,19 +63,19 @@ export default async function InspirationPage({
           : `Refresh finished: ${count} posts saved.`,
     },
     yue: {
-      eyebrow: "即時靈感 Feed",
-      title: "靈感 Feed",
+      eyebrow: "Active Signals · 預設睇最近 90 日",
+      title: "Signals",
       refresh: "即刻刷新",
-      guideTitle: "靈感 Feed = 搵可以翻用嘅內容 pattern。",
+      guideTitle: "Signals = 近期 crawled/captured 材料，俾 Janice triage。",
       guideDescription:
-        "呢個 tab 用嚟掃 X、Threads、IG Reels 最新參考。重點唔係儲 link，而係搵 hook、角度、格式、CTA、視覺節奏，之後改成你自己嘅內容。",
+        "呢個 tab 用嚟掃 X、Threads、IG Reels 同 manual-capture sources。重點唔係讀晒所有嘢，而係搵值得入 Knowledge Bank 嘅 implication。",
       xTitle: "尖銳觀點同 thread 邏輯",
       xBody: "X 用嚟拆第一句 hook、反常識角度、論點推進、thread 結構，適合 thought leadership。",
       threadsTitle: "人味、共鳴、日常語氣",
       threadsBody: "Threads 用嚟睇 casual 開場、confession 式語氣、留言互動、每日存在感內容。",
       reelsTitle: "短片頭 3 秒同畫面節奏",
       reelsBody: "IG Reels 用嚟拆頭 3 秒、字幕、鏡頭、剪接 pacing、caption、save/share 觸發位。",
-      tip: "撳 Mark 前問自己：『我可唔可以一句講到點解佢 work？』得就 Mark 做 Carousel / Reel / 攻略圖；唔得就 skip。",
+      tip: "Save 前問：『呢條對 Alvie career、business、CityU、AI usage、content creation、partnerships 有冇用？』冇就當 noise。",
       emptyTitle: "呢組 filter 暫時搵唔到 post。",
       emptyBody:
         "通常係 filter 太窄、刷新未搵到有用內容，或者 source/category settings 要調整。空 feed 唔等於壞咗；佢係提醒你要放闊範圍或者收窄策略。",
@@ -115,8 +115,8 @@ export default async function InspirationPage({
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
-          <p className="text-sm text-zinc-500">{copy.eyebrow}</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-zinc-50">
+          <p className="text-sm text-slate-600">{copy.eyebrow}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">
             {copy.title}
           </h1>
         </div>
@@ -135,7 +135,7 @@ export default async function InspirationPage({
       </header>
 
       {refreshCount ? (
-        <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-200">
+        <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-700">
           {copy.refreshed(refreshCount, refreshErrors)}
         </p>
       ) : null}
@@ -155,13 +155,25 @@ export default async function InspirationPage({
             body: copy.threadsBody,
           },
           {
-            label: "IG Reels",
+            label: "IG / YouTube",
             title: copy.reelsTitle,
-            body: copy.reelsBody,
+            body: `${copy.reelsBody} YouTube is supported first through Quick Capture, not broad channel crawl.`,
           },
         ]}
         tip={copy.tip}
       />
+
+      <section className="rounded-xl border border-blue-100 bg-white p-4 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Janice Summary shell</p>
+        <div className="mt-2 grid gap-3 md:grid-cols-4">
+          {["Executive Summary", "Flags", "Implication for Alvie", "Recommended Action"].map((label) => (
+            <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+              <strong className="text-slate-950">{label}</strong>
+              <p className="mt-1 text-xs leading-5 text-slate-500">Generated only from real selected/captured sources; Atlas does not fake summaries.</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -202,7 +214,7 @@ export default async function InspirationPage({
         </div>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-lg border border-zinc-850 bg-zinc-900 p-3 lg:flex-row lg:items-center lg:justify-between">
+      <section className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
           {TIME_FILTERS.map((filter) => (
             <FilterLink
@@ -269,20 +281,20 @@ export default async function InspirationPage({
           ))}
         </section>
       ) : (
-        <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-5 text-sm text-zinc-400">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 text-sm text-slate-600">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-base font-semibold text-zinc-100">
+            <h2 className="text-base font-semibold text-slate-900">
               {copy.emptyTitle}
             </h2>
-            <p className="mt-2 leading-6 text-zinc-500">{copy.emptyBody}</p>
+            <p className="mt-2 leading-6 text-slate-600">{copy.emptyBody}</p>
           </div>
           <div className="mx-auto mt-4 grid max-w-3xl gap-2 text-left md:grid-cols-3">
             {copy.emptyActions.map((action, index) => (
               <div
                 key={action}
-                className="rounded-md border border-zinc-800 bg-zinc-950/70 p-3 text-xs leading-5 text-zinc-500"
+                className="rounded-md border border-slate-200 bg-slate-50/70 p-3 text-xs leading-5 text-slate-600"
               >
-                <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-300/80">
+                <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700/80">
                   Step {index + 1}
                 </span>
                 {action}
@@ -291,13 +303,13 @@ export default async function InspirationPage({
           </div>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <Link
-              className="rounded-md border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-semibold text-sky-200 transition hover:bg-sky-400/15"
+              className="rounded-md border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-600/15"
               href="/inspiration?time=all"
             >
               {copy.resetFilters}
             </Link>
             <Link
-              className="rounded-md border border-zinc-800 px-3 py-2 text-xs font-semibold text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-950"
+              className="rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
               href="/settings"
             >
               {copy.openSettings}

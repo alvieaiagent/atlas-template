@@ -29,8 +29,8 @@ const MARKED_LABEL: Partial<Record<Purpose, string>> = {
 };
 
 const destStyles: Record<DestinationState, { icon: string; className: string }> = {
-  ok: { icon: "✓", className: "text-emerald-300" },
-  failed: { icon: "⚠", className: "text-amber-300" },
+  ok: { icon: "✓", className: "text-emerald-700" },
+  failed: { icon: "⚠", className: "text-amber-700" },
   skipped: { icon: "–", className: "text-zinc-600" },
 };
 
@@ -141,7 +141,7 @@ export function CardActions({ post }: { post: Post }) {
             className={cn(
               "w-full",
               post.used &&
-                "border-emerald-400/50 bg-emerald-400/15 text-emerald-200 hover:bg-emerald-400/25",
+                "border-emerald-400/50 bg-emerald-400/15 text-emerald-700 hover:bg-emerald-400/25",
             )}
             title={post.used ? "已使用過 · 撳一下取消" : "標記為已使用"}
           >

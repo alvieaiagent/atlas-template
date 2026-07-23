@@ -70,8 +70,8 @@ export default async function MarkedPage() {
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
-          <p className="text-sm text-zinc-500">{copy.eyebrow}</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-zinc-50">
+          <p className="text-sm text-slate-600">{copy.eyebrow}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">
             {copy.title}
           </h1>
         </div>
@@ -105,25 +105,25 @@ export default async function MarkedPage() {
       />
 
       <section className="rounded-xl border border-emerald-400/15 bg-emerald-400/[0.06] p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-300/80">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700/80">
           {copy.workflow}
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
-          <div className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
-            <h2 className="text-sm font-semibold text-zinc-100">{copy.pickTitle}</h2>
-            <p className="mt-1 text-xs leading-5 text-zinc-500">
+          <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+            <h2 className="text-sm font-semibold text-slate-900">{copy.pickTitle}</h2>
+            <p className="mt-1 text-xs leading-5 text-slate-600">
               {copy.pickBody}
             </p>
           </div>
-          <div className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
-            <h2 className="text-sm font-semibold text-zinc-100">{copy.generateTitle}</h2>
-            <p className="mt-1 text-xs leading-5 text-zinc-500">
+          <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+            <h2 className="text-sm font-semibold text-slate-900">{copy.generateTitle}</h2>
+            <p className="mt-1 text-xs leading-5 text-slate-600">
               {copy.generateBody}
             </p>
           </div>
-          <div className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
-            <h2 className="text-sm font-semibold text-zinc-100">{copy.usedTitle}</h2>
-            <p className="mt-1 text-xs leading-5 text-zinc-500">
+          <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+            <h2 className="text-sm font-semibold text-slate-900">{copy.usedTitle}</h2>
+            <p className="mt-1 text-xs leading-5 text-slate-600">
               {copy.usedBody}
             </p>
           </div>
@@ -141,7 +141,7 @@ export default async function MarkedPage() {
                   competitorKey(post.source, post.authorHandle),
                 )}
               />
-              <div className="rounded-md border border-zinc-850 bg-zinc-900 px-3 py-2 text-xs text-zinc-500">
+              <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
                 {copy.status}: {post.status} · {copy.marked}{" "}
                 {new Intl.DateTimeFormat("en-HK", {
                   month: "short",
@@ -154,7 +154,7 @@ export default async function MarkedPage() {
           ))}
         </section>
       ) : (
-        <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-8 text-center text-sm text-zinc-500">
+        <section className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-600">
           {copy.empty}
         </section>
       )}

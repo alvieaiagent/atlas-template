@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Atlas — Inspiration Dashboard",
-  description: "Private inspiration dashboard for X, Threads, and IG Reels.",
+  title: "Atlas V2 — Strategic Intelligence System",
+  description: "Private Janice-powered strategic intelligence system and Knowledge Bank.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-zinc-950 text-zinc-50">{children}</body>
+      <body className="min-h-full bg-white text-slate-950">{children}</body>
     </html>
   );
 }

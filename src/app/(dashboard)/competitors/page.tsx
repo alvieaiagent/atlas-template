@@ -4,6 +4,7 @@ import { SourceIcon } from "@/components/posts/source-icon";
 import { removeCompetitorAction } from "@/lib/actions";
 import { getCompetitors } from "@/lib/data";
 import { getLanguage, pick } from "@/lib/language";
+import { FALLBACK_WATCHLIST } from "@/lib/strategic-intelligence";
 import type { Source } from "@/lib/types";
 
 function profileUrl(source: Source, handle: string): string {
@@ -16,18 +17,11 @@ function profileUrl(source: Source, handle: string): string {
   return `https://x.com/${handle}`;
 }
 
-// Instagram-style gradient ring per source, so a card reads like a 看板 avatar.
 function ringClass(source: Source): string {
-  if (source === "ig") {
-    return "bg-gradient-to-tr from-amber-400 via-rose-500 to-fuchsia-600";
-  }
-  if (source === "x") {
-    return "bg-sky-500";
-  }
-  if (source === "threads") {
-    return "bg-zinc-200";
-  }
-  return "bg-zinc-600";
+  if (source === "ig") return "bg-blue-600";
+  if (source === "x") return "bg-slate-900";
+  if (source === "threads") return "bg-slate-300";
+  return "bg-slate-400";
 }
 
 function initialOf(value: string): string {
@@ -40,10 +34,10 @@ export default async function CompetitorsPage() {
   const copy = pick(language, {
     en: {
       eyebrow: "Accounts to watch",
-      title: "Competitors",
-      intro: "Press + beside the source on any card to track that account. This page shows every account you watch and how many saved posts you have from them.",
-      guideTitle: "Competitors = accounts you want to learn from or beat.",
-      guideDescription: "This tab is not for stalking random creators. It is a watchlist for accounts whose hooks, offers, formats, or audience reactions can improve your own content strategy.",
+      title: "People / Watchlist",
+      intro: "Track creators, accounts, channels, websites, and sources that deserve conservative refreshes. Existing competitor rows are preserved below.",
+      guideTitle: "Watchlist = priority sources Atlas should monitor without burning credits.",
+      guideDescription: "This tab is not for stalking random creators. It is a strategic watchlist for AI, platform, creator, growth, partnership, and product signals.",
       addTitle: "Track from any post card",
       addBody: "Press the + beside a card's source badge when the creator repeatedly makes content worth studying.",
       auditTitle: "Compare patterns, not ego",
@@ -58,10 +52,10 @@ export default async function CompetitorsPage() {
     },
     yue: {
       eyebrow: "要觀察嘅 accounts",
-      title: "競爭對手",
-      intro: "喺任何卡右上角 source 旁邊撳 + 就追蹤嗰個帳號；呢度睇晒你 watch 緊嘅對手，同已存咗幾多條佢哋嘅 post。",
-      guideTitle: "競爭對手 = 你想學習或者打贏嘅 accounts。",
-      guideDescription: "呢個 tab 唔係用嚟 stalk random creators，而係 watchlist：佢哋嘅 hooks、offers、formats、audience reactions 可以改善你自己嘅 content strategy。",
+      title: "People / Watchlist",
+      intro: "追蹤值得保守刷新嘅 creators、accounts、channels、websites、sources。原本 competitors rows 會保留喺下面。",
+      guideTitle: "Watchlist = Atlas 應該監察但唔亂燒 credits 嘅 priority sources。",
+      guideDescription: "呢個 tab 唔係用嚟 stalk random creators，而係 strategy watchlist：AI、platform、creator、growth、partnership、product signals。",
       addTitle: "由任何 post card 加入追蹤",
       addBody: "當一個 creator 重複出到值得研究嘅內容，就喺 card source badge 旁邊撳 +。",
       auditTitle: "比 patterns，唔係比 ego",
@@ -80,11 +74,11 @@ export default async function CompetitorsPage() {
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header>
-        <p className="text-sm text-zinc-500">{copy.eyebrow}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-normal text-zinc-50">
+        <p className="text-sm text-slate-600">{copy.eyebrow}</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">
           {copy.title}
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-slate-600">
           {copy.intro}
         </p>
       </header>
@@ -112,12 +106,40 @@ export default async function CompetitorsPage() {
         tip={copy.tip}
       />
 
+      <section className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-950">Priority watchlist shell</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Typed fallback/config only until a watchlist table is approved. Force refresh buttons show crawl scope instead of fake cost.
+        </p>
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          {FALLBACK_WATCHLIST.map((item) => (
+            <article key={item.name} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-bold text-slate-950">{item.name}</p>
+                  <p className="mt-1 text-xs text-slate-500">{item.source} · {item.urlOrHandle}</p>
+                </div>
+                <span className="rounded-full bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700">{item.priority}</span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{item.notes}</p>
+              <dl className="mt-3 grid gap-2 text-xs text-slate-500">
+                <div><dt className="font-bold text-slate-700">Learning area</dt><dd>{item.learningArea}</dd></div>
+                <div><dt className="font-bold text-slate-700">Last / next refresh</dt><dd>{item.lastRefreshed} → {item.nextSuggestedRefresh}</dd></div>
+              </dl>
+              <button className="mt-3 min-h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700" type="button">
+                Force refresh shell · scope first
+              </button>
+            </article>
+          ))}
+        </div>
+      </section>
+
       {competitors.length ? (
         <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {competitors.map((competitor) => (
             <article
               key={`${competitor.source}-${competitor.handle}`}
-              className="group flex items-center gap-3 rounded-xl border border-zinc-850 bg-zinc-900 p-4 transition hover:border-zinc-700"
+              className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300"
             >
               <a
                 href={profileUrl(competitor.source, competitor.handle)}
@@ -129,18 +151,18 @@ export default async function CompetitorsPage() {
                 <span
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full p-[2px] ${ringClass(competitor.source)}`}
                 >
-                  <span className="flex h-full w-full items-center justify-center rounded-full bg-zinc-950 text-base font-semibold text-zinc-100">
+                  <span className="flex h-full w-full items-center justify-center rounded-full bg-slate-50 text-base font-semibold text-slate-900">
                     {initialOf(competitor.name ?? competitor.handle)}
                   </span>
                 </span>
                 <span className="min-w-0">
-                  <span className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50 transition group-hover:text-sky-300">
+                  <span className="flex items-center gap-1.5 text-sm font-semibold text-slate-950 transition group-hover:text-blue-700">
                     <span className="truncate">
                       {competitor.name ?? competitor.handle}
                     </span>
-                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-zinc-500 transition group-hover:text-sky-300" />
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-600 transition group-hover:text-blue-700" />
                   </span>
-                  <span className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-500">
+                  <span className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-600">
                     <SourceIcon source={competitor.source} className="h-3 w-3 shrink-0" />
                     <span className="truncate">
                       @{competitor.handle} · {competitor.postCount} {copy.saved}
@@ -153,7 +175,7 @@ export default async function CompetitorsPage() {
                 <input type="hidden" name="handle" value={competitor.handle} />
                 <button
                   type="submit"
-                  className="text-xs text-zinc-500 transition hover:text-red-300"
+                  className="text-xs text-slate-600 transition hover:text-red-600"
                   title={copy.remove}
                 >
                   {copy.remove}
@@ -163,7 +185,7 @@ export default async function CompetitorsPage() {
           ))}
         </section>
       ) : (
-        <section className="rounded-lg border border-zinc-850 bg-zinc-900 p-8 text-center text-sm text-zinc-500">
+        <section className="rounded-lg border border-slate-200 bg-white p-8 text-center text-sm text-slate-600">
           {copy.empty}
         </section>
       )}

@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  Bookmark,
+  Archive,
+  BookOpen,
   Gauge,
   Library,
   Lightbulb,
-  Radar,
   Settings,
   Sparkles,
   Users,
@@ -18,21 +18,21 @@ import { cn } from "@/lib/utils";
 
 const navItems: Record<Language, { href: string; label: string; icon: typeof Gauge }[]> = {
   en: [
-    { href: "/", label: "Dashboard", icon: Gauge },
-    { href: "/inspiration", label: "Inspiration", icon: Lightbulb },
-    { href: "/radar", label: "AI Radar", icon: Radar },
-    { href: "/marked", label: "Marked", icon: Bookmark },
-    { href: "/library", label: "Library", icon: Library },
-    { href: "/competitors", label: "Competitors", icon: Users },
+    { href: "/", label: "Today", icon: Gauge },
+    { href: "/inspiration", label: "Signals", icon: Lightbulb },
+    { href: "/learnings", label: "Daily Learnings", icon: BookOpen },
+    { href: "/library", label: "Knowledge Bank", icon: Library },
+    { href: "/archive", label: "Archive", icon: Archive },
+    { href: "/competitors", label: "People / Watchlist", icon: Users },
     { href: "/settings", label: "Settings", icon: Settings },
   ],
   yue: [
-    { href: "/", label: "總覽", icon: Gauge },
-    { href: "/inspiration", label: "靈感 Feed", icon: Lightbulb },
-    { href: "/radar", label: "AI 雷達", icon: Radar },
-    { href: "/marked", label: "已 Mark", icon: Bookmark },
-    { href: "/library", label: "素材庫", icon: Library },
-    { href: "/competitors", label: "競爭對手", icon: Users },
+    { href: "/", label: "今日", icon: Gauge },
+    { href: "/inspiration", label: "Signals", icon: Lightbulb },
+    { href: "/learnings", label: "每日學習", icon: BookOpen },
+    { href: "/library", label: "Knowledge Bank", icon: Library },
+    { href: "/archive", label: "Archive", icon: Archive },
+    { href: "/competitors", label: "People / Watchlist", icon: Users },
     { href: "/settings", label: "設定", icon: Settings },
   ],
 };
@@ -41,21 +41,21 @@ export function Sidebar({ language }: { language: Language }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-zinc-850 bg-zinc-950">
-      <div className="flex h-16 items-center gap-3 border-b border-zinc-850 px-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-400 text-zinc-950">
+    <aside className="flex h-full w-full flex-col border-r border-slate-200 bg-white text-slate-950">
+      <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-blue-600 text-white">
           <Sparkles className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-zinc-50">Atlas</p>
-          <p className="text-xs text-zinc-500">Inspiration OS</p>
+          <p className="text-sm font-bold text-slate-950">Atlas V2</p>
+          <p className="text-xs text-slate-500">Strategic Intelligence</p>
         </div>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
         {navItems[language].map((item) => {
           const active =
             item.href === "/"
-              ? pathname === "/"
+              ? pathname === "/" || pathname === "/today"
               : pathname.startsWith(item.href);
           const Icon = item.icon;
 
@@ -64,8 +64,8 @@ export function Sidebar({ language }: { language: Language }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex h-10 items-center gap-3 rounded-md px-3 text-sm text-zinc-400 transition hover:bg-zinc-900 hover:text-zinc-50",
-                active && "bg-zinc-900 text-zinc-50",
+                "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700",
+                active && "bg-blue-50 text-blue-700 ring-1 ring-blue-100",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -74,9 +74,9 @@ export function Sidebar({ language }: { language: Language }) {
           );
         })}
       </nav>
-      <div className="border-t border-zinc-850 p-3">
+      <div className="border-t border-slate-200 p-3">
         <LanguageToggle language={language} />
-        <p className="mt-3 text-xs text-zinc-600">Atlas</p>
+        <p className="mt-3 text-xs text-slate-500">Janice-only briefings · no sub-agent POVs</p>
       </div>
     </aside>
   );

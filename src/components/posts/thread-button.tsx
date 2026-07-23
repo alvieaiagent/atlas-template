@@ -50,7 +50,7 @@ export function ThreadButton({ post }: { post: Post }) {
       </form>
 
       {state.ran && !state.ok && state.error ? (
-        <p className="text-[11px] text-amber-300">{state.error}</p>
+        <p className="text-[11px] text-amber-700">{state.error}</p>
       ) : null}
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -71,7 +71,7 @@ export function ThreadButton({ post }: { post: Post }) {
                       setTimeout(() => setCopied(false), 1500);
                     }
                   }}
-                  className="inline-flex items-center gap-1 text-xs text-sky-300 transition hover:text-sky-200"
+                  className="inline-flex items-center gap-1 text-xs text-sky-300 transition hover:text-blue-700"
                 >
                   <Copy className="h-3 w-3" />
                   {copied ? "已複製" : "複製"}

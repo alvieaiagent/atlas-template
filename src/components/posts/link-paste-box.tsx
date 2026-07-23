@@ -55,16 +55,16 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
   }, [initialUrl, linkAction]);
 
   return (
-    <section className="flex flex-col gap-3 rounded-lg border border-zinc-850 bg-zinc-900 p-4">
-      <div className="flex gap-1 self-start rounded-md border border-zinc-800 bg-zinc-950 p-0.5 text-xs">
+    <section className="flex flex-col gap-3 rounded-lg border border-blue-100 bg-white p-4 shadow-sm">
+      <div className="flex gap-1 self-start rounded-md border border-slate-200 bg-slate-50 p-0.5 text-xs">
         <button
           type="button"
           onClick={() => setMode("link")}
           className={cn(
             "flex items-center gap-1.5 rounded px-3 py-1.5 transition",
             mode === "link"
-              ? "bg-zinc-800 text-zinc-100"
-              : "text-zinc-500 hover:text-zinc-300",
+              ? "bg-blue-600 text-white"
+              : "text-slate-500 hover:text-blue-700",
           )}
         >
           <Link2 className="h-3.5 w-3.5" />
@@ -76,8 +76,8 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
           className={cn(
             "flex items-center gap-1.5 rounded px-3 py-1.5 transition",
             mode === "note"
-              ? "bg-zinc-800 text-zinc-100"
-              : "text-zinc-500 hover:text-zinc-300",
+              ? "bg-blue-600 text-white"
+              : "text-slate-500 hover:text-blue-700",
           )}
         >
           <FileText className="h-3.5 w-3.5" />
@@ -105,7 +105,7 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
             name="text"
             rows={4}
             placeholder="貼一段想 save 低嘅文字 / 筆記 / 靈感…"
-            className="w-full resize-y rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-amber-400"
+            className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           />
           <Button type="submit" disabled={pending} className="self-end sm:w-auto">
             <FileText className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
       )}
 
       {pending ? (
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-slate-500">
           {mode === "link"
             ? "Resolving the link — 社交 post 經 Apify 可能要 10–30s,網站連結快好多。"
             : "分析緊呢段文字…"}
@@ -124,7 +124,7 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
         <p
           className={cn(
             "text-xs",
-            state.ok ? "text-emerald-300" : "text-amber-300",
+            state.ok ? "text-emerald-700" : "text-amber-700",
           )}
         >
           {state.message}
@@ -153,22 +153,22 @@ function PreviewCard({
           className="h-14 w-14 shrink-0 rounded object-cover"
         />
       ) : (
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-zinc-900 text-zinc-500">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-slate-100 text-slate-500">
           <SourceIcon source={preview.source} className="h-5 w-5" />
         </span>
       )}
       <span className="min-w-0">
-        <span className="flex items-center gap-1.5 text-sm font-medium text-zinc-100">
+        <span className="flex items-center gap-1.5 text-sm font-bold text-slate-950">
           <SourceIcon source={preview.source} className="h-3.5 w-3.5" />
           <span className="truncate">{preview.authorName || preview.url || "筆記"}</span>
         </span>
         {preview.text ? (
-          <span className="mt-0.5 line-clamp-2 block text-xs text-zinc-400">
+          <span className="mt-0.5 line-clamp-2 block text-xs text-slate-600">
             {preview.text}
           </span>
         ) : null}
         {preview.views > 0 ? (
-          <span className="mt-0.5 block text-xs text-zinc-600">
+          <span className="mt-0.5 block text-xs text-slate-500">
             {formatViews(preview.views)} views
           </span>
         ) : null}
@@ -177,7 +177,7 @@ function PreviewCard({
   );
 
   const className =
-    "flex items-center gap-3 rounded-md border border-zinc-800 bg-zinc-950 p-3 transition";
+    "flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 transition";
 
   // Notes have no URL — render a static panel instead of a dead link.
   return preview.url ? (
@@ -185,7 +185,7 @@ function PreviewCard({
       href={preview.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(className, "hover:border-zinc-700")}
+      className={cn(className, "hover:border-blue-200")}
     >
       {inner}
     </a>

@@ -12,13 +12,13 @@ export default async function DashboardLayout({
   const language = await getLanguage();
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50">
+    <div className="min-h-screen bg-white text-slate-950">
       <div className="grid min-h-screen grid-cols-1 md:grid-cols-[240px_1fr]">
         <div className="hidden md:block">
           <Sidebar language={language} />
         </div>
-        <div className="flex min-w-0 flex-col">
-          <div className="border-b border-zinc-850 bg-zinc-950 md:hidden">
+        <div className="flex min-w-0 flex-col bg-slate-50">
+          <div className="border-b border-slate-200 bg-white md:hidden">
             <Sidebar language={language} />
           </div>
           {!featureStatus.supabase ? <MockModeBanner /> : null}

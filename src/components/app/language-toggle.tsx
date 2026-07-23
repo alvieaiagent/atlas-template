@@ -16,16 +16,16 @@ export function LanguageToggle({ language }: { language: Language }) {
   const next = query ? `${pathname}?${query}` : pathname;
 
   return (
-    <div className="grid grid-cols-2 gap-1 rounded-md border border-zinc-800 bg-zinc-950 p-1">
+    <div className="grid grid-cols-2 gap-1 rounded-md border border-slate-200 bg-slate-50 p-1">
       {options.map((option) => (
         <a
           key={option.value}
           href={`/api/language?lang=${option.value}&next=${encodeURIComponent(next)}`}
           className={cn(
-            "flex h-8 items-center justify-center rounded px-2 text-xs font-semibold transition",
+            "flex min-h-8 items-center justify-center rounded px-2 text-xs font-bold transition",
             language === option.value
-              ? "bg-sky-400 text-zinc-950"
-              : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-200",
+              ? "bg-blue-600 text-white"
+              : "text-slate-600 hover:bg-blue-50 hover:text-blue-700",
           )}
         >
           {option.label}

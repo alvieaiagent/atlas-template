@@ -27,18 +27,18 @@ export function UsageGuide({
   return (
     <section
       className={cn(
-        "rounded-xl border border-sky-400/20 bg-sky-400/[0.06] p-4 shadow-[0_0_0_1px_rgba(56,189,248,0.04)]",
+        "rounded-xl border border-blue-100 bg-blue-50 p-4 shadow-sm",
         className,
       )}
     >
       <div className="flex flex-col gap-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300/80">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-700">
           {eyebrow}
         </p>
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
+        <h2 className="text-lg font-bold tracking-tight text-slate-950">
           {title}
         </h2>
-        <p className="max-w-3xl text-sm leading-6 text-zinc-400">
+        <p className="max-w-3xl text-sm leading-6 text-slate-600">
           {description}
         </p>
       </div>
@@ -47,19 +47,19 @@ export function UsageGuide({
         {steps.map((step) => (
           <article
             key={step.label}
-            className="rounded-lg border border-zinc-800/80 bg-zinc-950/70 p-3"
+            className="rounded-lg border border-blue-100 bg-white p-3"
           >
-            <div className="mb-2 inline-flex h-7 items-center rounded-full border border-sky-400/20 bg-sky-400/10 px-2.5 text-[11px] font-semibold text-sky-200">
+            <div className="mb-2 inline-flex h-7 items-center rounded-full border border-blue-100 bg-blue-50 px-2.5 text-[11px] font-bold text-blue-700">
               {step.label}
             </div>
-            <h3 className="text-sm font-semibold text-zinc-100">{step.title}</h3>
-            <p className="mt-1 text-xs leading-5 text-zinc-500">{step.body}</p>
+            <h3 className="text-sm font-bold text-slate-950">{step.title}</h3>
+            <p className="mt-1 text-xs leading-5 text-slate-600">{step.body}</p>
           </article>
         ))}
       </div>
 
       {tip ? (
-        <div className="mt-3 rounded-lg border border-amber-300/15 bg-amber-300/[0.07] px-3 py-2 text-xs leading-5 text-amber-100/85">
+        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900">
           {tip}
         </div>
       ) : null}
