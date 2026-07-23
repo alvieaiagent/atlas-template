@@ -17,7 +17,7 @@ export default async function LearningAreaPage({ params }: LearningAreaPageProps
     en: { eyebrow: "Daily Learnings", title: "Janice summaries grouped by date", intro: "Use this lane when the question belongs here. Janice keeps it executive, implication-focused, and honest about weak/noisy signals.", back: "Back to hub", fallback: "Fallback/sample · not live data" },
     yue: { eyebrow: "每日學習", title: "按日期分組嘅 Janice summaries", intro: "當問題屬於呢條 lane，就用呢頁。Janice 保持 executive、implication-focused，並會老實講 weak/noisy signals。", back: "返去 hub", fallback: "Fallback/sample · not live data" },
   });
-  const entries = await getDailySummaries(area.label);
+  const entries = await getDailySummaries(area.label, language);
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">

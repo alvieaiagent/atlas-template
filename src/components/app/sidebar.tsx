@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LanguageToggle } from "@/components/app/language-toggle";
 import type { Language } from "@/lib/language";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +49,6 @@ export function Sidebar({ language }: { language: Language }) {
           <p className="text-sm font-bold text-slate-950">Atlas V2</p>
           <p className="text-xs text-slate-500">Strategic Intelligence</p>
         </div>
-        <LanguageToggle language={language} />
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
         {navItems[language].map((item) => {

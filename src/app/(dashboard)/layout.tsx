@@ -1,3 +1,4 @@
+import { LanguageToggle } from "@/components/app/language-toggle";
 import { MockModeBanner } from "@/components/app/mock-mode-banner";
 import { Sidebar } from "@/components/app/sidebar";
 import { logFeatureStatusOnce } from "@/lib/env";
@@ -20,6 +21,10 @@ export default async function DashboardLayout({
         <div className="flex min-w-0 flex-col bg-slate-50">
           <div className="border-b border-slate-200 bg-white md:hidden">
             <Sidebar language={language} />
+          </div>
+          {/* Global top bar: language switch lives top-right on every page. */}
+          <div className="flex items-center justify-end border-b border-slate-200 bg-white px-4 py-2">
+            <LanguageToggle language={language} />
           </div>
           {!featureStatus.supabase ? <MockModeBanner /> : null}
           {children}

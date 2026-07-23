@@ -5,15 +5,36 @@ import { SOURCES, type Source } from "@/lib/types";
 
 export const maxDuration = 60;
 
-function parseSources(formData: FormData): Source[] | undefined {
+// "all" / missing = whatever the Settings 資料來源 toggles enable (cookie;
+// Threads is off by default because its search actor is ~7x the cost of X/IG).
+function parseSources(formData: FormData, request: Request): Source[] | undefined {
   const raw = formData.get("sources");
-  if (typeof raw !== "string" || raw === "all") {
-    return undefined;
+  if (typeof raw === "string" && raw !== "all") {
+    const requested = raw.split(",").filter((source): source is Source =>
+      SOURCES.some((item) => item.source === source),
+    );
+    if (requested.length) {
+      return requested;
+    }
   }
-  const requested = raw.split(",").filter((source): source is Source =>
-    SOURCES.some((item) => item.source === source),
-  );
-  return requested.length ? requested : undefined;
+
+  const feedSources: Source[] = ["x", "threads", "ig"];
+  const defaults: Source[] = ["x", "ig"];
+  const cookie = request.headers
+    .get("cookie")
+    ?.match(/(?:^|; )atlas-sources=([^;]*)/)?.[1];
+  if (!cookie) {
+    return defaults;
+  }
+  try {
+    const parsed = JSON.parse(decodeURIComponent(cookie)) as Partial<Record<Source, unknown>>;
+    const enabled = feedSources.filter((source) =>
+      typeof parsed[source] === "boolean" ? parsed[source] : defaults.includes(source),
+    );
+    return enabled.length ? enabled : defaults;
+  } catch {
+    return defaults;
+  }
 }
 
 export async function POST(request: Request) {
@@ -24,7 +45,7 @@ export async function POST(request: Request) {
       typeof categoryId === "string" && categoryId
         ? (category) => category.id === categoryId
         : undefined,
-    sources: parseSources(formData),
+    sources: parseSources(formData, request),
   });
   const fetched = results.reduce((sum, result) => sum + result.fetched, 0);
   const errors = results.filter((result) => result.error).length;

@@ -2,7 +2,9 @@ import { unstable_noStore as noStore } from "next/cache";
 import { mockPosts } from "@/lib/mock-data";
 import { getLocalCategories } from "@/lib/local-categories";
 import { getLocalCompetitors } from "@/lib/local-watchlist";
+import { getLocalDailyLearnings } from "@/lib/daily-learnings";
 import { getLocalFeedRows } from "@/lib/local-feed";
+import type { Language } from "@/lib/language";
 import { getLocalLibraryPosts, getLocalMarkedPosts } from "@/lib/local-library";
 import { mapCategory, mapPost } from "@/lib/mappers";
 import {
@@ -113,14 +115,23 @@ function mapDailySummary(row: DailySummaryRow): DailySummary {
 
 export async function getDailySummaries(
   learningArea?: string,
+  language: Language = "en",
 ): Promise<DailySummary[]> {
   noStore();
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
+    // Real briefing first: Gemini over captured posts (cached per HKT day).
+    // Areas without live signal fall back to the labeled sample structure.
+    const live = await getLocalDailyLearnings(language);
+    const liveAreas = new Set(live.map((entry) => entry.learningArea));
+    const merged = [
+      ...live,
+      ...FALLBACK_DAILY_SUMMARIES.filter((entry) => !liveAreas.has(entry.learningArea)),
+    ];
     return learningArea
-      ? FALLBACK_DAILY_SUMMARIES.filter((entry) => entry.learningArea === learningArea)
-      : FALLBACK_DAILY_SUMMARIES;
+      ? merged.filter((entry) => entry.learningArea === learningArea)
+      : merged;
   }
 
   let query = supabase

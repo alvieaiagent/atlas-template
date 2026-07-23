@@ -28,7 +28,7 @@ export default async function SettingsPage() {
       keywordsBody: "Use specific keywords and accounts. Broad keywords create noise; precise keywords make the feed useful.",
       tip: "When the feed is bad, fix Settings first. More scraping will not help if the keywords and accounts are weak.",
       dataSources: "Data sources",
-      dataSourcesBody: "Toggle the sources you want Atlas to consider for refresh jobs.",
+      dataSourcesBody: "These toggles control which sources Force Refresh actually crawls. Threads is off by default — its search actor costs ~7x more Apify credits than X/IG.",
       categories: "Categories",
       categoryHelp: "Keywords and accounts are comma-separated.",
       namePlaceholder: "Category name",
@@ -51,7 +51,7 @@ export default async function SettingsPage() {
       keywordsBody: "用具體 keywords 同 accounts。太闊會變 noise；越精準，feed 越有用。",
       tip: "Feed 唔好，先修 Settings。Keywords/accounts 弱，scrape 多啲都冇用。",
       dataSources: "資料來源",
-      dataSourcesBody: "開關你想 Atlas refresh 時考慮嘅 sources。",
+      dataSourcesBody: "呢啲開關直接控制 Force Refresh 實際 crawl 邊啲 sources。Threads 預設關咗 — 佢個 search actor 食 Apify credits 係 X/IG 嘅 ~7 倍。",
       categories: "分類",
       categoryHelp: "Keywords 同 accounts 用 comma 分隔。",
       namePlaceholder: "分類名稱",
@@ -127,7 +127,7 @@ export default async function SettingsPage() {
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {[
-            { label: "Refresh All Sources", sources: "all" },
+            { label: "Refresh Enabled Sources", sources: "all" },
             { label: "Refresh Threads", sources: "threads" },
             { label: "Refresh IG", sources: "ig" },
             { label: "Refresh X", sources: "x" },
