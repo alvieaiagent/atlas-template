@@ -1,3 +1,4 @@
+import { getJaniceSummaries } from "@/lib/janice-summary";
 import { Grid2X2, List, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { FilterLink } from "@/components/app/filter-link";
@@ -110,6 +111,7 @@ export default async function InspirationPage({
     source: activeSources,
   });
   const competitorKeys = await getCompetitorKeySet();
+  const janiceSummaries = await getJaniceSummaries(posts);
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
@@ -277,6 +279,7 @@ export default async function InspirationPage({
               isCompetitor={competitorKeys.has(
                 competitorKey(post.source, post.authorHandle),
               )}
+              janiceSummary={janiceSummaries.get(post.id)}
             />
           ))}
         </section>

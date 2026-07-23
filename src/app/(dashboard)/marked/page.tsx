@@ -1,3 +1,4 @@
+import { getJaniceSummaries } from "@/lib/janice-summary";
 import { Bookmark } from "lucide-react";
 import { UsageGuide } from "@/components/app/usage-guide";
 import { PostCard } from "@/components/posts/post-card";
@@ -64,6 +65,7 @@ export default async function MarkedPage() {
     },
   });
   const posts = await getMarkedPosts();
+  const janiceSummaries = await getJaniceSummaries(posts);
   const competitorKeys = await getCompetitorKeySet();
 
   return (
@@ -140,6 +142,7 @@ export default async function MarkedPage() {
                 isCompetitor={competitorKeys.has(
                   competitorKey(post.source, post.authorHandle),
                 )}
+                janiceSummary={janiceSummaries.get(post.id)}
               />
               <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
                 {copy.status}: {post.status} · {copy.marked}{" "}

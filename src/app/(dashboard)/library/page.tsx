@@ -3,6 +3,7 @@ import { UsageGuide } from "@/components/app/usage-guide";
 import { LinkPasteBox } from "@/components/posts/link-paste-box";
 import { PostCard } from "@/components/posts/post-card";
 import { competitorKey, getCompetitorKeySet, getLibraryPosts } from "@/lib/data";
+import { getJaniceSummaries, type JaniceSummary } from "@/lib/janice-summary";
 import { getLanguage, pick } from "@/lib/language";
 import type { Post } from "@/lib/types";
 
@@ -11,11 +12,11 @@ export const maxDuration = 60;
 type LibraryPageProps = { searchParams: Promise<{ topic?: string; add?: string; captured?: string }> };
 type AutoTopic = { slug: string; label: string; posts: Post[] };
 
-function PostGrid({ posts, competitorKeys }: { posts: Post[]; competitorKeys: Set<string> }) {
+function PostGrid({ posts, competitorKeys, summaries }: { posts: Post[]; competitorKeys: Set<string>; summaries: Map<string, JaniceSummary> }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} view="grid" compact isCompetitor={competitorKeys.has(competitorKey(post.source, post.authorHandle))} />
+        <PostCard key={post.id} post={post} view="grid" compact isCompetitor={competitorKeys.has(competitorKey(post.source, post.authorHandle))} janiceSummary={summaries.get(post.id)} />
       ))}
     </div>
   );
@@ -139,6 +140,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   });
 
   const [allPosts, competitorKeys] = await Promise.all([getLibraryPosts(), getCompetitorKeySet()]);
+  const janiceSummaries = await getJaniceSummaries(allPosts);
   const autoTopics = buildAutoTopics(allPosts);
   const activeTopic = autoTopics.some((item) => item.slug === topic) ? topic : undefined;
   const posts = activeTopic ? autoTopics.find((item) => item.slug === activeTopic)?.posts ?? [] : allPosts;
@@ -182,7 +184,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
               </div>
               <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-bold text-slate-600">{posts.length}</span>
             </div>
-            <PostGrid posts={posts} competitorKeys={competitorKeys} />
+            <PostGrid posts={posts} competitorKeys={competitorKeys} summaries={janiceSummaries} />
           </section>
         ) : (
           <div className="flex flex-col gap-6">
@@ -195,7 +197,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                   </div>
                   <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-bold text-slate-600">{item.posts.length}</span>
                 </div>
-                <PostGrid posts={item.posts} competitorKeys={competitorKeys} />
+                <PostGrid posts={item.posts} competitorKeys={competitorKeys} summaries={janiceSummaries} />
               </section>
             ))}
           </div>

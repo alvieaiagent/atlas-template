@@ -6,6 +6,7 @@ import { RadarSaveButton } from "@/components/posts/radar-save-button";
 import { ThreadButton } from "@/components/posts/thread-button";
 import { Button } from "@/components/ui/button";
 import { getCategories, getRadarPosts } from "@/lib/data";
+import { getJaniceSummaries } from "@/lib/janice-summary";
 import { getLanguage, pick } from "@/lib/language";
 import { parseTime, type InspirationSearchParams } from "@/lib/search-params";
 import { TIME_FILTERS, type TimeFilter } from "@/lib/types";
@@ -89,6 +90,7 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
     radarCategory: activeCategory,
     ...(savedTab ? { savedOnly: true } : { time: activeTime }),
   });
+  const janiceSummaries = await getJaniceSummaries(posts);
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
@@ -186,6 +188,7 @@ export default async function RadarPage({ searchParams }: RadarPageProps) {
               key={post.id}
               post={post}
               view="grid"
+              janiceSummary={janiceSummaries.get(post.id)}
               actions={
                 <div className="flex flex-col gap-2">
                   <RadarSaveButton post={post} />

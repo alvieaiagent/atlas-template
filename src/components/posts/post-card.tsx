@@ -16,6 +16,7 @@ import { CardActions } from "@/components/posts/card-actions";
 import { SourceIcon } from "@/components/posts/source-icon";
 import { DeleteButton } from "@/components/posts/delete-button";
 import { PostThumbnail } from "@/components/posts/post-thumbnail";
+import { heuristicSummary, type JaniceSummary } from "@/lib/janice-summary";
 
 type PostCardProps = {
   post: Post;
@@ -25,6 +26,9 @@ type PostCardProps = {
   // Override the default footer actions (Mark / 拍片 / ✨生成). The Twitter→Thread
   // column passes <ThreadButton /> here. Defaults to <CardActions /> when omitted.
   actions?: React.ReactNode;
+  // Precomputed Janice summary (LLM-backed when GEMINI_API_KEY is set).
+  // Falls back to the keyword heuristic when omitted.
+  janiceSummary?: JaniceSummary;
 };
 
 const sourceLabels: Record<Post["source"], string> = {
@@ -66,85 +70,13 @@ function formatDate(value: string): string {
   }).format(new Date(value));
 }
 
-type JaniceSummary = {
-  headline: string;
-  bullets: { label: string; text: string }[];
-};
-
-function summarizePost(post: Post): JaniceSummary {
-  const text = post.text.replace(/\s+/g, " ").trim();
-  const lower = text.toLowerCase();
-
-  if (!text) {
-    return {
-      headline: "Saved reference with no extracted caption yet.",
-      bullets: [
-        { label: "Key point", text: "Atlas could not extract text for this post, so its value is unverified." },
-        { label: "Implication for Alvie", text: "Do not build on it until the source has been opened and read." },
-        { label: "Recommended action", text: "Open the source link, then tag or delete it." },
-      ],
-    };
-  }
-
-  if (lower.includes("course") || text.includes("課程") || text.includes("證書")) {
-    return {
-      headline: "AI learning / career-capital reference.",
-      bullets: [
-        { label: "Key point", text: "Structured learning content (course / certificate) that maps to a concrete skill." },
-        { label: "Implication for Alvie", text: "Certificates and named skills strengthen Big Tech interview positioning." },
-        { label: "Recommended action", text: "Tag Use for Career and extract 1 interview-ready example from it." },
-      ],
-    };
-  }
-
-  if (lower.includes("prompt") || lower.includes("social media manager") || lower.includes("followers")) {
-    return {
-      headline: "Creator-growth playbook reference.",
-      bullets: [
-        { label: "Key point", text: "A repeatable AI workflow for content output or audience growth." },
-        { label: "Implication for Alvie", text: "Feeds the faceless passive-income line without personal-brand exposure." },
-        { label: "Recommended action", text: "Test the workflow once before trusting its claimed results." },
-      ],
-    };
-  }
-
-  if (lower.includes("vibe code") || lower.includes("cron") || lower.includes("skill") || text.includes("自動")) {
-    return {
-      headline: "Automation / system-building lesson.",
-      bullets: [
-        { label: "Key point", text: "The durable value is the repeatable workflow, not the one-off tool." },
-        { label: "Implication for Alvie", text: "Candidate pattern for the AI-agent execution stack." },
-        { label: "Recommended action", text: "Note which step is automatable and add it to the build backlog." },
-      ],
-    };
-  }
-
-  if (text.includes("算命") || text.includes("八字") || text.includes("紫微")) {
-    return {
-      headline: "Consumer AI trend signal.",
-      bullets: [
-        { label: "Key point", text: "AI packaged as entertainment / identity / self-discovery drives mass attention." },
-        { label: "Implication for Alvie", text: "Market signal for consumer-product trends, not a build recommendation." },
-        { label: "Recommended action", text: "Track whether this format monetizes or stays a novelty." },
-      ],
-    };
-  }
-
-  return {
-    headline: `${text.slice(0, 110)}${text.length > 110 ? "…" : ""}`,
-    bullets: [
-      { label: "Key point", text: "No matched pattern yet — summary shows the raw caption." },
-      { label: "Recommended action", text: "Open the source and tag it so future summaries improve." },
-    ],
-  };
-}
-
 export function PostCard({
   post,
   view,
   compact = false,
   isCompetitor = false,
   actions,
+  janiceSummary,
 }: PostCardProps) {
   const firstMedia = post.media[0];
 
@@ -275,10 +207,15 @@ export function PostCard({
         ) : null}
 
         {(() => {
-          const summary = summarizePost(post);
+          const summary = janiceSummary ?? heuristicSummary(post);
           return (
             <div className="rounded-md border border-blue-100 bg-blue-50 p-2.5 text-xs leading-5 text-slate-700">
-              <p className="font-bold text-blue-800">Janice executive summary</p>
+              <p className="font-bold text-blue-800">
+                Janice executive summary
+                {summary.mode === "heuristic" ? (
+                  <span className="ml-1.5 font-normal text-slate-400">keyword draft — no LLM key</span>
+                ) : null}
+              </p>
               <p className="mt-1 font-bold text-slate-950">{summary.headline}</p>
               <ul className="mt-1.5 space-y-1">
                 {summary.bullets.map((bullet) => (
