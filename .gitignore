@@ -47,3 +47,4 @@ supabase/.temp/
 .hermes/local-categories.json
 .hermes/local-library-posts.json
 .hermes/local-watchlist.json
+.hermes/thumbnails/

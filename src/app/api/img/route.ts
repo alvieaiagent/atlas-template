@@ -1,7 +1,14 @@
 import { isAllowedImageUrl } from "@/lib/image-proxy";
+import {
+  readCachedThumbnail,
+  THUMBNAIL_FETCH_HEADERS,
+  writeCachedThumbnail,
+} from "@/lib/thumbnail-cache";
 
 // Server-side image proxy: fetches an allow-listed CDN image and streams it back same-origin,
 // so the browser can render Instagram / Threads thumbnails that block cross-origin hotlinking.
+// Successful fetches are cached to disk (.hermes/thumbnails) because these CDN URLs are signed
+// and expire — the cache keeps thumbnails alive after the upstream URL dies.
 export async function GET(request: Request): Promise<Response> {
   const target = new URL(request.url).searchParams.get("url");
 
@@ -9,18 +16,20 @@ export async function GET(request: Request): Promise<Response> {
     return new Response("forbidden", { status: 403 });
   }
 
-  let upstream: Response;
-  try {
-    // Browser-like headers: IG/fbcdn CDN 對 datacenter IP / 冇 referer 嘅請求會擋,
-    // 扮成由 instagram.com hotlink 嘅瀏覽器請求,提高喺 Vercel server 攞到圖嘅機會。
-    upstream = await fetch(target, {
+  const cached = await readCachedThumbnail(target);
+  if (cached) {
+    return new Response(new Uint8Array(cached.body), {
+      status: 200,
       headers: {
-        "user-agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-        accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-        referer: "https://www.instagram.com/",
+        "Content-Type": cached.contentType,
+        "Cache-Control": "public, max-age=86400",
       },
     });
+  }
+
+  let upstream: Response;
+  try {
+    upstream = await fetch(target, { headers: THUMBNAIL_FETCH_HEADERS });
   } catch {
     return new Response("upstream fetch failed", { status: 502 });
   }
@@ -30,12 +39,19 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   const contentType = upstream.headers.get("content-type") ?? "image/jpeg";
+  const body = Buffer.from(await upstream.arrayBuffer());
 
-  return new Response(upstream.body, {
+  try {
+    await writeCachedThumbnail(target, body, contentType);
+  } catch {
+    // Cache write failure must not break image serving (e.g. read-only FS on Vercel).
+  }
+
+  return new Response(new Uint8Array(body), {
     status: 200,
     headers: {
       "Content-Type": contentType,
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "public, max-age=86400",
     },
   });
 }

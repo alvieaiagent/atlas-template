@@ -19,6 +19,7 @@ import {
   upsertLocalLibraryPost,
 } from "@/lib/local-library";
 import { removeLocalCompetitor, upsertLocalCompetitor } from "@/lib/local-watchlist";
+import { warmThumbnailCache } from "@/lib/thumbnail-cache";
 import { parseEngagement, parseMedia, splitCsv } from "@/lib/mappers";
 import { parsePostPayload, postToInsert } from "@/lib/post-payload";
 import {
@@ -54,6 +55,10 @@ export async function markPostAction(
   if (!supabase || !post) {
     if (post) {
       await upsertLocalLibraryPost({ ...post, marked: true });
+      // Saved cards must outlive the signed CDN URL — cache the thumbnail now.
+      await warmThumbnailCache(
+        post.media.filter((media) => media.type === "image").map((media) => media.url),
+      );
     }
     revalidatePath("/inspiration");
     revalidatePath("/marked");

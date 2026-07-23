@@ -1,7 +1,8 @@
 import { ApifyClient } from "apify-client";
 import type { Json } from "@/lib/database.types";
 import { getServerEnv } from "@/lib/env";
-import { mapCategory } from "@/lib/mappers";
+import { mapCategory, parseMedia } from "@/lib/mappers";
+import { warmThumbnailCache } from "@/lib/thumbnail-cache";
 import { buildSinglePostInput } from "@/lib/link-source";
 import { derivePostUrl } from "@/lib/post-url";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -1667,6 +1668,17 @@ export async function refreshInspirationFeed(
           if (error) {
             throw new Error(error.message);
           }
+
+          // Signed CDN thumbnails die days after the crawl — cache them now,
+          // not on first page view.
+          const warm = await warmThumbnailCache(
+            items.flatMap((item) =>
+              parseMedia(item.media ?? [])
+                .filter((media) => media.type === "image")
+                .map((media) => media.url),
+            ),
+          );
+          console.log("[thumbnail warm]", JSON.stringify({ source, categoryId: category.id, ...warm }));
         }
 
         await supabase.from("scrape_cursors").upsert({
