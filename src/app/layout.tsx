@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Atlas V2 — Strategic Intelligence System",
+  title: "Atlas V3 — Strategic Intelligence System",
   description: "Private Janice-powered strategic intelligence system and Knowledge Bank.",
 };
 

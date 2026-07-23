@@ -13,7 +13,7 @@ export async function TodayPageContent() {
   const copy = pick(language, {
     en: {
       eyebrow: "Today · Strategic Intelligence System",
-      title: "Atlas V2 for Alvie",
+      title: "Atlas V3 for Alvie",
       introStrong: "Private Janice-powered briefing + Knowledge Bank.",
       intro: "Capture useful internet signals, summarize them honestly, and turn them into career, business, CityU, AI, content, and partnership POV.",
       viewBrief: "View Strategic Brief",
@@ -35,7 +35,7 @@ export async function TodayPageContent() {
     },
     yue: {
       eyebrow: "今日 · Strategic Intelligence System",
-      title: "Atlas V2 for Alvie",
+      title: "Atlas V3 for Alvie",
       introStrong: "私人 Janice briefing + Knowledge Bank。",
       intro: "擷取有用 internet signals，老實 summary，轉成 Alvie career、business、CityU、AI、content、partnership POV。",
       viewBrief: "睇 Strategic Brief",
@@ -99,7 +99,7 @@ export async function TodayPageContent() {
           {highValueSignals.length ? <div className="space-y-3">{highValueSignals.map((post) => <a key={post.id} href={post.url ?? "/inspiration"} target={post.url ? "_blank" : undefined} className="block rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-200"><p className="line-clamp-2 text-sm font-bold text-slate-950">{post.text || post.authorName}</p><p className="mt-1 text-xs text-slate-500">{post.source.toUpperCase()} · {post.authorHandle || "unknown"}</p></a>)}</div> : <Empty text={copy.empty} />}
         </Panel>
         <Panel title={copy.flags} icon={<ShieldAlert className="h-4 w-4" />}><ul className="space-y-2 text-sm leading-6 text-slate-700">{copy.flagItems.map((item) => <li key={item}><strong className="text-slate-950">{item.split(". ")[0]}.</strong> {item.split(". ").slice(1).join(". ")}</li>)}</ul></Panel>
-        <Panel title={copy.queue} icon={<Save className="h-4 w-4" />}><div className="flex flex-wrap gap-2">{["Use for Career", "Use for Business", "Use for CityU", "Use for AI", "Build POV", "Market Signal"].map((tag) => <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">{tag}</span>)}</div><p className="mt-3 text-sm text-slate-600">V2 metadata is typed, but DB columns are not migrated in this pass. Use Library purpose filters until worth_tags exists.</p></Panel>
+        <Panel title={copy.queue} icon={<Save className="h-4 w-4" />}><div className="flex flex-wrap gap-2">{["Use for Career", "Use for Business", "Use for CityU", "Use for AI", "Build POV", "Market Signal"].map((tag) => <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">{tag}</span>)}</div><p className="mt-3 text-sm text-slate-600">V3 metadata is typed, but DB columns are not migrated in this pass. Use Library purpose filters until worth_tags exists.</p></Panel>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">

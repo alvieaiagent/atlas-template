@@ -84,7 +84,7 @@ export const FALLBACK_DAILY_SUMMARIES: DailySummary[] = LEARNING_AREAS.map((area
   dateHkt: "Sample · not live data",
   learningArea: area.label,
   isFallback: true,
-  executiveSummary: "No generated daily summary has been saved yet. This card is a V2 structure preview only, so do not treat it as market intelligence.",
+  executiveSummary: "No generated daily summary has been saved yet. This card is a V3 structure preview only, so do not treat it as market intelligence.",
   keyPoints: ["Atlas needs real crawled links, notes, or selected watchlist items before Janice can brief this lane.", "Use Quick Capture or Force Refresh first, then save the useful outputs into Knowledge Bank."],
   highlights: ["The lane is ready for Janice-style executive summaries once data exists."],
   lowlights: ["Fallback content has no source evidence and should not drive decisions."],

@@ -46,7 +46,7 @@ export function Sidebar({ language }: { language: Language }) {
           <Sparkles className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-slate-950">Atlas V2</p>
+          <p className="text-sm font-bold text-slate-950">Atlas V3</p>
           <p className="text-xs text-slate-500">Strategic Intelligence</p>
         </div>
       </div>

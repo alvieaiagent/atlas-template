@@ -148,9 +148,25 @@ export async function getDailySummaries(
 
   const { data, error } = await query;
   if (error || !data?.length) {
+    // No stored daily_summaries yet — generate today's briefing from the
+    // Supabase posts instead of only showing samples.
+    const { data: postRows } = await supabase
+      .from("posts")
+      .select("author_handle, url, text")
+      .order("posted_at", { ascending: false })
+      .limit(60);
+    const live = await getLocalDailyLearnings(
+      language,
+      (postRows ?? []).map((row) => ({ handle: row.author_handle, url: row.url, text: row.text })),
+    );
+    const liveAreas = new Set(live.map((entry) => entry.learningArea));
+    const merged = [
+      ...live,
+      ...FALLBACK_DAILY_SUMMARIES.filter((entry) => !liveAreas.has(entry.learningArea)),
+    ];
     return learningArea
-      ? FALLBACK_DAILY_SUMMARIES.filter((entry) => entry.learningArea === learningArea)
-      : FALLBACK_DAILY_SUMMARIES;
+      ? merged.filter((entry) => entry.learningArea === learningArea)
+      : merged;
   }
 
   return (data as DailySummaryRow[]).map(mapDailySummary);

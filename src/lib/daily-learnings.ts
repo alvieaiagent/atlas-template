@@ -82,12 +82,18 @@ function coerceSummaries(raw: string, dateHkt: string): DailySummary[] {
   }
 }
 
+export type LearningSourcePost = { handle: string; url: string | null; text: string };
+
 /**
- * Today's real Daily Learnings from captured posts. Returns [] when there is
- * nothing to summarize or no LLM key — the page then shows its honest empty /
- * sample state instead of fake intelligence.
+ * Today's real Daily Learnings from captured posts. Pass `sources` to summarize
+ * Supabase-backed posts; omit to read the local mock-mode stores. Returns []
+ * when there is nothing to summarize or no LLM key — the page then shows its
+ * honest empty / sample state instead of fake intelligence.
  */
-export async function getLocalDailyLearnings(language: Language): Promise<DailySummary[]> {
+export async function getLocalDailyLearnings(
+  language: Language,
+  sources?: LearningSourcePost[],
+): Promise<DailySummary[]> {
   const dateHkt = todayHkt();
   const cacheKey = `${dateHkt}:${language}`;
   const store = await readStore();
@@ -100,20 +106,17 @@ export async function getLocalDailyLearnings(language: Language): Promise<DailyS
     return [];
   }
 
-  const [library, feed] = await Promise.all([getLocalLibraryPosts(), getLocalFeedRows()]);
-  const feedTexts = feed.map((row) => ({
-    handle: row.author_handle,
-    url: row.url,
-    text: row.text,
-  }));
-  const libraryTexts = library.map((post) => ({
-    handle: post.authorHandle,
-    url: post.url,
-    text: post.text,
-  }));
-  const posts = [...libraryTexts, ...feedTexts]
-    .filter((post) => post.text.trim())
-    .slice(0, 60);
+  let pool: LearningSourcePost[];
+  if (sources) {
+    pool = sources;
+  } else {
+    const [library, feed] = await Promise.all([getLocalLibraryPosts(), getLocalFeedRows()]);
+    pool = [
+      ...library.map((post) => ({ handle: post.authorHandle, url: post.url, text: post.text })),
+      ...feed.map((row) => ({ handle: row.author_handle, url: row.url, text: row.text })),
+    ];
+  }
+  const posts = pool.filter((post) => post.text.trim()).slice(0, 60);
   if (!posts.length) {
     return [];
   }
