@@ -637,11 +637,29 @@ export async function deletePostAction(formData: FormData): Promise<void> {
   revalidatePath("/marked");
 }
 
+function normalizeWatchlistHandle(source: string, value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  try {
+    const url = new URL(trimmed.startsWith("http") ? trimmed : `https://${trimmed}`);
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (source === "youtube") {
+      return parts[0] === "@" ? parts[1] ?? trimmed : parts[0]?.replace(/^@/, "") ?? trimmed;
+    }
+    if (source === "ig") return parts[0] ?? trimmed;
+    if (source === "threads") return (parts[0] ?? trimmed).replace(/^@/, "");
+    if (source === "x") return parts[0] ?? trimmed;
+  } catch {
+    // Plain handle; normalize below.
+  }
+
+  return trimmed.replace(/^@/, "").replace(/\/$/, "");
+}
+
 export async function addCompetitorAction(formData: FormData): Promise<void> {
   const source = String(formData.get("source") ?? "");
-  const handle = String(formData.get("handle") ?? "")
-    .replace(/^@/, "")
-    .trim();
+  const handle = normalizeWatchlistHandle(source, String(formData.get("handle") ?? ""));
   const name = String(formData.get("name") ?? "").trim();
 
   if (

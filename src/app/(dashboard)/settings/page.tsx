@@ -10,7 +10,7 @@ import {
 } from "@/lib/actions";
 import { getCategories } from "@/lib/data";
 import { getLanguage, pick } from "@/lib/language";
-import { CRAWL_BUDGET_MODES } from "@/lib/strategic-intelligence";
+import { CRAWL_BUDGET_MODES, STRATEGIC_TOPIC_PRESETS } from "@/lib/strategic-intelligence";
 
 export default async function SettingsPage() {
   const language = await getLanguage();
@@ -139,6 +139,29 @@ export default async function SettingsPage() {
           </p>
         </div>
         <SourceToggles />
+      </section>
+
+      <section className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-950">Janice topic / keyword presets</h2>
+        <p className="mt-1 text-sm leading-6 text-slate-600">
+          These are the Phase 1 topic lanes from Janice Executive Summary Hub. Use them as the default keywords/accounts for Settings categories before Phase 2 persistence adds richer learning-area metadata.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {STRATEGIC_TOPIC_PRESETS.map((preset) => (
+            <article key={preset.learningArea} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <h3 className="font-bold text-slate-950">{preset.learningArea}</h3>
+              <p className="mt-2 text-xs leading-5 text-slate-600">{preset.notes}</p>
+              <div className="mt-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Keywords</p>
+                <p className="mt-1 text-xs leading-5 text-slate-700">{preset.keywords.join(", ")}</p>
+              </div>
+              <div className="mt-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Accounts</p>
+                <p className="mt-1 text-xs leading-5 text-slate-700">{preset.accounts.join(", ")}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4">
