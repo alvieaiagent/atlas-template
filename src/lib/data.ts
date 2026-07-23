@@ -1,6 +1,13 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { mockCategories, mockMarkedPosts, mockPosts } from "@/lib/mock-data";
+import { mockMarkedPosts, mockPosts } from "@/lib/mock-data";
+import { getLocalCategories } from "@/lib/local-categories";
 import { mapCategory, mapPost } from "@/lib/mappers";
+import {
+  FALLBACK_DAILY_SUMMARIES,
+  type DailySummary,
+  type LearningAreaLabel,
+  type RecommendedAction,
+} from "@/lib/strategic-intelligence";
 // Single-user localhost tool: data reads go through the service-role client so the app
 // works without a login session. (Pre-public-deploy TODO: switch back to the authenticated
 // client + per-user RLS.)
@@ -17,6 +24,19 @@ import type {
 } from "@/lib/types";
 
 export type CompetitorRow = Competitor & { postCount: number };
+type DailySummaryRow = {
+  id: string;
+  date_hkt: string;
+  learning_area: string;
+  executive_summary: string;
+  key_points: unknown;
+  highlights: unknown;
+  lowlights: unknown;
+  flags: unknown;
+  implication_for_alvie: string;
+  recommended_action: string;
+  sources_used: unknown;
+};
 
 export type PostFilters = {
   categoryId?: string;
@@ -49,7 +69,7 @@ export async function getCategories(): Promise<Category[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return mockCategories;
+    return getLocalCategories();
   }
 
   const { data, error } = await supabase
@@ -63,6 +83,63 @@ export async function getCategories(): Promise<Category[]> {
   }
 
   return data.map(mapCategory);
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+function mapDailySummary(row: DailySummaryRow): DailySummary {
+  return {
+    id: row.id,
+    dateHkt: row.date_hkt,
+    learningArea: row.learning_area as LearningAreaLabel,
+    isFallback: false,
+    executiveSummary: row.executive_summary,
+    keyPoints: stringArray(row.key_points),
+    highlights: stringArray(row.highlights),
+    lowlights: stringArray(row.lowlights),
+    flags: stringArray(row.flags),
+    implicationForAlvie: row.implication_for_alvie,
+    recommendedAction: row.recommended_action as RecommendedAction,
+    sourcesUsed: stringArray(row.sources_used),
+  };
+}
+
+export async function getDailySummaries(
+  learningArea?: string,
+): Promise<DailySummary[]> {
+  noStore();
+  const supabase = createSupabaseAdminClient();
+
+  if (!supabase) {
+    return learningArea
+      ? FALLBACK_DAILY_SUMMARIES.filter((entry) => entry.learningArea === learningArea)
+      : FALLBACK_DAILY_SUMMARIES;
+  }
+
+  let query = supabase
+    .from("daily_summaries")
+    .select(
+      "id,date_hkt,learning_area,executive_summary,key_points,highlights,lowlights,flags,implication_for_alvie,recommended_action,sources_used",
+    )
+    .order("date_hkt", { ascending: false })
+    .limit(60);
+
+  if (learningArea) {
+    query = query.eq("learning_area", learningArea);
+  }
+
+  const { data, error } = await query;
+  if (error || !data?.length) {
+    return learningArea
+      ? FALLBACK_DAILY_SUMMARIES.filter((entry) => entry.learningArea === learningArea)
+      : FALLBACK_DAILY_SUMMARIES;
+  }
+
+  return (data as DailySummaryRow[]).map(mapDailySummary);
 }
 
 export async function getPosts(filters: PostFilters): Promise<Post[]> {

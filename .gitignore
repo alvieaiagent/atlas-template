@@ -42,3 +42,6 @@ next-env.d.ts
 
 # supabase local artifacts
 supabase/.temp/
+
+# Atlas local mock-mode runtime data
+.hermes/local-categories.json

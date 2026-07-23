@@ -61,6 +61,15 @@ export type Database = {
           url: string | null;
           added_via: AddedVia;
           purpose: Purpose;
+          used: boolean;
+          learning_area: string | null;
+          worth_tags: string[];
+          janice_summary: Json | null;
+          janice_verdict: string | null;
+          saved_to_knowledge_bank: boolean;
+          archived_at: string | null;
+          hidden_from_active: boolean;
+          used_at: string | null;
         };
         Insert: {
           id?: string;
@@ -78,6 +87,15 @@ export type Database = {
           url?: string | null;
           added_via?: AddedVia;
           purpose?: Purpose;
+          used?: boolean;
+          learning_area?: string | null;
+          worth_tags?: string[];
+          janice_summary?: Json | null;
+          janice_verdict?: string | null;
+          saved_to_knowledge_bank?: boolean;
+          archived_at?: string | null;
+          hidden_from_active?: boolean;
+          used_at?: string | null;
         };
         Update: {
           author_handle?: string;
@@ -92,6 +110,64 @@ export type Database = {
           url?: string | null;
           added_via?: AddedVia;
           purpose?: Purpose;
+          used?: boolean;
+          learning_area?: string | null;
+          worth_tags?: string[];
+          janice_summary?: Json | null;
+          janice_verdict?: string | null;
+          saved_to_knowledge_bank?: boolean;
+          archived_at?: string | null;
+          hidden_from_active?: boolean;
+          used_at?: string | null;
+        };
+        Relationships: [];
+      };
+      daily_summaries: {
+        Row: {
+          id: string;
+          date_hkt: string;
+          learning_area: string;
+          executive_summary: string;
+          key_points: Json;
+          highlights: Json;
+          lowlights: Json;
+          flags: Json;
+          implication_for_alvie: string;
+          recommended_action: string;
+          source_post_ids: string[];
+          sources_used: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          date_hkt: string;
+          learning_area: string;
+          executive_summary: string;
+          key_points?: Json;
+          highlights?: Json;
+          lowlights?: Json;
+          flags?: Json;
+          implication_for_alvie: string;
+          recommended_action: string;
+          source_post_ids?: string[];
+          sources_used?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          date_hkt?: string;
+          learning_area?: string;
+          executive_summary?: string;
+          key_points?: Json;
+          highlights?: Json;
+          lowlights?: Json;
+          flags?: Json;
+          implication_for_alvie?: string;
+          recommended_action?: string;
+          source_post_ids?: string[];
+          sources_used?: Json;
+          updated_at?: string;
         };
         Relationships: [];
       };

@@ -8,6 +8,11 @@ import { generateForPurpose, type OutputKind } from "@/lib/integrations/generate
 import { transcribeVideo } from "@/lib/integrations/transcribe";
 import { fetchYouTubeTranscript } from "@/lib/integrations/youtube-transcript";
 import { detectSource } from "@/lib/link-source";
+import {
+  createLocalCategory,
+  deleteLocalCategory,
+  updateLocalCategory,
+} from "@/lib/local-categories";
 import { parseEngagement, parseMedia, splitCsv } from "@/lib/mappers";
 import { parsePostPayload, postToInsert } from "@/lib/post-payload";
 import {
@@ -147,10 +152,6 @@ export async function toggleUsedAction(formData: FormData): Promise<void> {
 
 export async function createCategory(formData: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    redirect("/settings?mock=1");
-  }
-
   const name = String(formData.get("name") ?? "").trim();
   const color = String(formData.get("color") ?? "#38bdf8").trim();
 
@@ -158,12 +159,27 @@ export async function createCategory(formData: FormData): Promise<void> {
     redirect("/settings?error=category-name");
   }
 
-  const { error } = await supabase.from("categories").insert({
+  const input = {
     name,
     color,
     keywords: splitCsv(formData.get("keywords")),
     accounts: splitCsv(formData.get("accounts")),
-    sort_order: Number(formData.get("sortOrder") ?? 0),
+    sortOrder: Number(formData.get("sortOrder") ?? 0),
+  };
+
+  if (!supabase) {
+    await createLocalCategory(input);
+    revalidatePath("/settings");
+    revalidatePath("/inspiration");
+    redirect("/settings?saved=local");
+  }
+
+  const { error } = await supabase.from("categories").insert({
+    name: input.name,
+    color: input.color,
+    keywords: input.keywords,
+    accounts: input.accounts,
+    sort_order: input.sortOrder,
   });
 
   if (error) {
@@ -179,21 +195,35 @@ export async function updateCategory(formData: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const id = String(formData.get("id") ?? "");
 
-  if (!supabase || !id) {
-    redirect("/settings?mock=1");
-  }
-
   const name = String(formData.get("name") ?? "").trim();
   const color = String(formData.get("color") ?? "#38bdf8").trim();
+  const input = {
+    name,
+    color,
+    keywords: splitCsv(formData.get("keywords")),
+    accounts: splitCsv(formData.get("accounts")),
+    sortOrder: Number(formData.get("sortOrder") ?? 0),
+  };
+
+  if (!id) {
+    redirect("/settings?error=category-id");
+  }
+
+  if (!supabase) {
+    await updateLocalCategory(id, input);
+    revalidatePath("/settings");
+    revalidatePath("/inspiration");
+    redirect("/settings?saved=local");
+  }
 
   const { error } = await supabase
     .from("categories")
     .update({
-      name,
-      color,
-      keywords: splitCsv(formData.get("keywords")),
-      accounts: splitCsv(formData.get("accounts")),
-      sort_order: Number(formData.get("sortOrder") ?? 0),
+      name: input.name,
+      color: input.color,
+      keywords: input.keywords,
+      accounts: input.accounts,
+      sort_order: input.sortOrder,
     })
     .eq("id", id);
 
@@ -210,7 +240,13 @@ export async function deleteCategory(formData: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const id = String(formData.get("id") ?? "");
 
-  if (supabase && id) {
+  if (!id) {
+    redirect("/settings?error=category-id");
+  }
+
+  if (!supabase) {
+    await deleteLocalCategory(id);
+  } else {
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) {
       throw new Error(error.message);
@@ -219,6 +255,7 @@ export async function deleteCategory(formData: FormData): Promise<void> {
 
   revalidatePath("/settings");
   revalidatePath("/inspiration");
+  redirect("/settings?saved=local");
 }
 
 function previewFromInsert(

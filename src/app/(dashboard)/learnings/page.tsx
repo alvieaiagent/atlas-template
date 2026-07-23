@@ -2,8 +2,9 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { UsageGuide } from "@/components/app/usage-guide";
 import { Button } from "@/components/ui/button";
+import { getDailySummaries } from "@/lib/data";
 import { getLanguage, pick } from "@/lib/language";
-import { FALLBACK_DAILY_SUMMARIES, LEARNING_AREAS } from "@/lib/strategic-intelligence";
+import { LEARNING_AREAS } from "@/lib/strategic-intelligence";
 
 export default async function LearningsPage() {
   const language = await getLanguage();
@@ -41,6 +42,7 @@ export default async function LearningsPage() {
       archive: "打開 Archive",
     },
   });
+  const summaries = await getDailySummaries();
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
@@ -54,7 +56,7 @@ export default async function LearningsPage() {
       </header>
       <UsageGuide title={copy.guideTitle} description={copy.guide} steps={copy.steps.map((title, index) => ({ label: String(index + 1), title, body: copy.bodies[index] }))} tip={copy.tip} />
       <section className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-blue-700"><CalendarDays className="h-4 w-4" /><h2 className="text-lg font-bold text-slate-950">{copy.shell}</h2></div><p className="mt-2 text-sm leading-6 text-slate-600"><strong className="text-slate-950">{copy.status.split(":")[0]}:</strong>{copy.status.slice(copy.status.indexOf(":") + 1)}</p></section>
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{LEARNING_AREAS.map((area) => { const summary = FALLBACK_DAILY_SUMMARIES.find((item) => item.learningArea === area.label); return <Link key={area.slug} href={`/learnings/${area.slug}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:bg-blue-50"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">{summary?.dateHkt}</p><h2 className="mt-2 text-lg font-bold text-slate-950">{area.label}</h2></div><span className="rounded-full border border-blue-100 bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700">Fallback</span></div><p className="mt-3 text-sm leading-6 text-slate-600">{summary?.executiveSummary}</p><div className="mt-4 flex items-center gap-2 text-sm font-bold text-blue-700">{copy.open} <ArrowRight className="h-4 w-4" /></div></Link>; })}</section>
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{LEARNING_AREAS.map((area) => { const summary = summaries.find((item) => item.learningArea === area.label); return <Link key={area.slug} href={`/learnings/${area.slug}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:bg-blue-50"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">{summary?.dateHkt}</p><h2 className="mt-2 text-lg font-bold text-slate-950">{area.label}</h2></div>{summary?.isFallback ? <span className="rounded-full border border-blue-100 bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700">Fallback</span> : null}</div><p className="mt-3 text-sm leading-6 text-slate-600">{summary?.executiveSummary}</p><div className="mt-4 flex items-center gap-2 text-sm font-bold text-blue-700">{copy.open} <ArrowRight className="h-4 w-4" /></div></Link>; })}</section>
       <section className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm text-slate-600"><strong className="text-slate-950">{copy.past.split(":")[0]}:</strong>{copy.past.slice(copy.past.indexOf(":") + 1)}</p><Button asChild variant="outline"><Link href="/archive">{copy.archive}</Link></Button></section>
     </main>
   );
