@@ -115,7 +115,7 @@ export default async function SettingsPage() {
             </article>
           ))}
         </div>
-        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">
+        <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm leading-6 text-blue-800">
           Cron status: <strong>daily disabled</strong>. Weekly Friday 9:00am HKT (`0 1 * * 5`) is not enabled because `vercel.json` has no cron and no safe authenticated weekly brief endpoint was confirmed.
         </div>
       </section>

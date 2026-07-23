@@ -30,7 +30,7 @@ const MARKED_LABEL: Partial<Record<Purpose, string>> = {
 
 const destStyles: Record<DestinationState, { icon: string; className: string }> = {
   ok: { icon: "✓", className: "text-emerald-700" },
-  failed: { icon: "⚠", className: "text-amber-700" },
+  failed: { icon: "⚠", className: "text-blue-800" },
   skipped: { icon: "–", className: "text-zinc-600" },
 };
 
@@ -65,7 +65,7 @@ export function CardActions({ post }: { post: Post }) {
         <form action={unmarkPost}>
           <input name="postId" type="hidden" value={post.id} />
           <Button
-            className="group w-full border-amber-400/50 bg-amber-400/15 text-amber-200 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-200"
+            className="group w-full border-blue-100 bg-blue-50 text-blue-800 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700"
             size="sm"
             type="submit"
             variant="outline"

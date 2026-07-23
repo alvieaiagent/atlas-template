@@ -46,7 +46,7 @@ const accentBorder: Record<Post["source"], string> = {
   youtube: "border-red-500/60",
   facebook: "border-blue-500/60",
   web: "border-emerald-500/60",
-  note: "border-amber-500/60",
+  note: "border-blue-200",
   xiaohongshu: "border-rose-500/60",
 };
 
@@ -151,7 +151,7 @@ export function PostCard({
                   type="submit"
                   title="已加入競爭對手 · 撳取消"
                   aria-label="已加入競爭對手"
-                  className="flex h-6 w-6 items-center justify-center rounded-md border border-amber-400/60 bg-amber-400/15 text-amber-700 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-600"
+                  className="flex h-6 w-6 items-center justify-center rounded-md border border-blue-200 bg-blue-50 text-blue-800 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-600"
                 >
                   <UserCheck className="h-3.5 w-3.5" />
                 </button>

@@ -50,7 +50,7 @@ export function ThreadButton({ post }: { post: Post }) {
       </form>
 
       {state.ran && !state.ok && state.error ? (
-        <p className="text-[11px] text-amber-700">{state.error}</p>
+        <p className="text-[11px] text-blue-800">{state.error}</p>
       ) : null}
 
       <Dialog.Root open={open} onOpenChange={setOpen}>

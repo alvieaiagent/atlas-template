@@ -9,7 +9,7 @@ const toneClasses: Record<NonNullable<BadgeProps["tone"]>, string> = {
   default: "border-zinc-700 bg-zinc-800 text-zinc-100",
   muted: "border-zinc-800 bg-zinc-900 text-zinc-400",
   green: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
-  orange: "border-orange-500/30 bg-orange-500/10 text-orange-200",
+  orange: "border-blue-100 bg-blue-50 text-blue-800",
   blue: "border-sky-500/30 bg-sky-500/10 text-blue-700",
 };
 

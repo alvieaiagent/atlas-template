@@ -124,7 +124,7 @@ export function LinkPasteBox({ initialUrl }: { initialUrl?: string }) {
         <p
           className={cn(
             "text-xs",
-            state.ok ? "text-emerald-700" : "text-amber-700",
+            state.ok ? "text-emerald-700" : "text-blue-800",
           )}
         >
           {state.message}

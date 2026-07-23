@@ -59,7 +59,7 @@ export function UsageGuide({
       </div>
 
       {tip ? (
-        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900">
+        <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
           {tip}
         </div>
       ) : null}

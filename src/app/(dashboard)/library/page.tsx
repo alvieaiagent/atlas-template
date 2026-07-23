@@ -77,7 +77,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-5 p-4 md:p-6">
       <header><p className="text-sm text-slate-600">{copy.eyebrow}</p><h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">{copy.title}</h1><p className="mt-1 text-sm text-slate-600">{copy.intro}</p></header>
-      {captureStatus === "ok" ? <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-700">{copy.ok}</p> : captureStatus === "fail" ? <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-sm text-amber-700">{copy.fail}</p> : captureStatus === "empty" ? <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-sm text-amber-700">{copy.emptyCapture}</p> : null}
+      {captureStatus === "ok" ? <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-700">{copy.ok}</p> : captureStatus === "fail" ? <p className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-2.5 text-sm text-blue-800">{copy.fail}</p> : captureStatus === "empty" ? <p className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-2.5 text-sm text-blue-800">{copy.emptyCapture}</p> : null}
       <LinkPasteBox initialUrl={sharedUrl} />
       <UsageGuide title={copy.guideTitle} description={copy.guideDescription} steps={[{ label: "Paste", title: copy.pasteTitle, body: copy.pasteBody }, { label: "Auto", title: copy.purposeTitle, body: copy.purposeBody }, { label: "Reuse", title: copy.reuseTitle, body: copy.reuseBody }]} tip={copy.tip} />
 

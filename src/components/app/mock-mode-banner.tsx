@@ -23,7 +23,7 @@ export function MockModeBanner() {
   }
 
   return (
-    <div className="border-b border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 md:px-6">
+    <div className="border-b border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800 md:px-6">
       <div className="flex items-center justify-between gap-3">
         <p>
           Mock mode — marking &amp; scraping disabled. Add Supabase env to
