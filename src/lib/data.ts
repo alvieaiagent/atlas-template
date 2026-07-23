@@ -2,6 +2,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { mockMarkedPosts, mockPosts } from "@/lib/mock-data";
 import { getLocalCategories } from "@/lib/local-categories";
 import { mapCategory, mapPost } from "@/lib/mappers";
+import { v1LibraryPosts } from "@/lib/v1-library-seed";
 import {
   FALLBACK_DAILY_SUMMARIES,
   type DailySummary,
@@ -313,7 +314,9 @@ export async function getLibraryPosts(purpose?: Purpose): Promise<Post[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return [];
+    return purpose
+      ? v1LibraryPosts.filter((post) => post.purpose === purpose)
+      : v1LibraryPosts;
   }
 
   let query = supabase
