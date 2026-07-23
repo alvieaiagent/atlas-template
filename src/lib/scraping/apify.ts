@@ -27,6 +27,16 @@ export const actorBySource: Record<Source, string> = {
   xiaohongshu: "xhs-fetch",
 };
 
+// Single-post resolution needs different actors from feed search: the search
+// actors above ignore buildSinglePostInput's URL-based schemas (e.g. the IG
+// hashtag scraper silently returns nothing for `directUrls`), which broke
+// paste-link capture and thumbnail rescue. Sources not listed here fall back
+// to the search actor.
+const singlePostActorBySource: Partial<Record<Source, string>> = {
+  ig: "apify/instagram-scraper",
+  threads: "logical_scrapers/threads-post-scraper",
+};
+
 export type RefreshResult = {
   source: Source;
   categoryId: string;
@@ -1316,7 +1326,7 @@ async function resolveViaApifyActor(
 ): Promise<NormalizedPostInsert | null> {
   const client = new ApifyClient({ token });
   const run = await client
-    .actor(actorBySource[source])
+    .actor(singlePostActorBySource[source] ?? actorBySource[source])
     .call(buildSinglePostInput(source, url));
   const datasetId = run.defaultDatasetId;
 
