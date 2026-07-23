@@ -7,6 +7,7 @@ import { mapCategory, parseMedia } from "@/lib/mappers";
 import { warmThumbnailCache } from "@/lib/thumbnail-cache";
 import { buildSinglePostInput } from "@/lib/link-source";
 import { derivePostUrl } from "@/lib/post-url";
+import { snapshotInsertImage } from "@/lib/scraping/snapshot";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { Category, Engagement, MediaItem, Source } from "@/lib/types";
 import type { Database } from "@/lib/database.types";
@@ -1743,6 +1744,11 @@ export async function refreshInspirationFeed(
         const items = normalizeApifyItems(source, category.id, dataset.items);
 
         if (items.length > 0) {
+          // Signed CDN thumbnails die days after the crawl — snapshot them into
+          // permanent Supabase Storage BEFORE upsert (mutates item.media), so
+          // prod cards never go black. Failures keep the original URL.
+          await Promise.allSettled(items.map((item) => snapshotInsertImage(supabase, item)));
+
           const { error } = await supabase.from("posts").upsert(items, {
             onConflict: "external_id",
           });
@@ -1750,8 +1756,8 @@ export async function refreshInspirationFeed(
             throw new Error(error.message);
           }
 
-          // Signed CDN thumbnails die days after the crawl — cache them now,
-          // not on first page view.
+          // Belt-and-braces for non-Vercel runs: disk-cache the (possibly
+          // already-permanent) image URLs too.
           const warm = await warmThumbnailCache(
             items.flatMap((item) =>
               parseMedia(item.media ?? [])
